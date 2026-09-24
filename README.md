@@ -1,0 +1,1 @@
+# thika-auto-test
