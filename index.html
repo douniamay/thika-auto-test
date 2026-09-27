@@ -4,567 +4,5082 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Thika Auto .dz — سوق السيارات</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,sans-serif}
-body{background:#f8fafc;color:#1e293b}
-[dir="ltr"] body{text-align:left}[dir="rtl"] body{text-align:right}
-header{background:#0f172a;color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:50}
-header h1{font-size:19px}header h1 span{color:#facc15}
-.btn{background:#facc15;color:#0f172a;border:none;padding:9px 16px;border-radius:10px;font-weight:800;cursor:pointer;font-size:13px}
-.btn-outline{background:transparent;color:#fff;border:1.5px solid #334155}
-.btn-delete{background:#fee2e2;color:#b91c1c;border:1px solid #fecaca}
-.header-actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
-.user-chip{background:#1e293b;padding:6px 12px;border-radius:20px;font-size:11px}
-.lang-switcher{display:flex;gap:6px}
-.lang-switcher button{border:1px solid #d1d5db;background:#fff;border-radius:8px;padding:5px 9px;cursor:pointer;font-weight:700;font-size:12px}
-.lang-switcher button.active{background:#facc15;border-color:#facc15}
-.trust-bar{background:#f0fdf4;padding:8px 16px;display:flex;gap:14px;overflow:auto;font-size:11px;color:#166534;border-bottom:1px solid #bbf7d0}
-.trust-bar span{white-space:nowrap;font-weight:700}
-.hero{background:linear-gradient(135deg,#0f172a,#1e3a8a);color:#fff;padding:30px 16px;text-align:center}
-.filters{background:#fff;padding:12px 16px;display:flex;gap:8px;overflow:auto;border-bottom:1px solid #e2e8f0}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;padding:16px}
-.card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.07);border:2px solid #e2e8f0}
-.card img{width:100%;height:170px;object-fit:cover;background:#e2e8f0}
-.card-body{padding:12px}
-.price{color:#16a34a;font-weight:900;font-size:17px}
-.meta{color:#64748b;font-size:11px;margin:3px 0}
-.badge{padding:3px 8px;border-radius:20px;font-size:10px;font-weight:800;display:inline-block;margin:2px;background:#dbeafe;color:#1e40af}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;z-index:60;padding:12px}
-.modal.active{display:flex}
-.modal-box{background:#fff;border-radius:18px;padding:22px;width:100%;max-width:440px;max-height:92vh;overflow:auto;position:relative}
-.close-x{position:absolute;top:12px;inset-inline-end:12px;background:#f1f5f9;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer}
-.input{width:100%;padding:12px;border:1.5px solid #cbd5e1;border-radius:10px;margin:7px 0;font-size:13px}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.note{background:#f0fdf4;border:1.5px solid #22c55e;border-radius:12px;padding:10px;margin:8px 0;font-size:11px}
-.pl{white-space:pre-line;font-size:12px;line-height:1.8}
-.chat-container{display:flex;flex-direction:column;height:460px}
-.chat-messages{flex:1;overflow:auto;padding:10px;background:#f1f5f9;border-radius:14px;margin-bottom:8px;display:flex;flex-direction:column;border:2px solid #e2e8f0}
-.msg{padding:10px 12px;border-radius:14px;margin:5px 0;max-width:82%;font-size:12px;word-break:break-word}
-.msg.other{background:#fff;border:1px solid #e2e8f0;align-self:flex-start}
-.msg.me{background:#0f172a;color:#fff;align-self:flex-end}
-.msg.system{background:#dcfce7;color:#166534;align-self:center;font-size:10px;text-align:center}
-.chat-ok,.chat-error{padding:8px;border-radius:8px;margin:6px 0;font-size:12px}
-.chat-ok{color:#166534;background:#f0fdf4;border:1px solid #bbf7d0}
-.chat-error{color:#b91c1c;background:#fef2f2;border:1px solid #fecaca}
-.page{max-width:900px;margin:0 auto;padding:18px}
-.box{background:#fff;border-radius:16px;padding:16px;margin:12px 0;border:2px solid #e2e8f0}
-.box h3{margin-bottom:8px}
-.fab{position:fixed;bottom:20px;inset-inline-start:20px;z-index:55;width:50px;height:50px;border-radius:50%;border:none;font-size:22px;cursor:pointer;background:#EA4335;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.3)}
-footer{background:#0f172a;color:#fff;padding:26px 16px 18px;margin-top:20px;font-size:12px}
-.footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:18px;max-width:900px;margin:0 auto}
-footer h4{color:#facc15;margin-bottom:8px;font-size:13px}
-footer .fcol a{display:block;color:#cbd5e1;text-decoration:none;margin:5px 0;cursor:pointer;font-size:12px}
-footer .fcol a:hover{color:#fff}
-footer .fcol p{color:#94a3b8;font-size:11px;line-height:1.7}
-footer .copy{text-align:center;border-top:1px solid #1e293b;margin-top:16px;padding-top:12px;font-size:11px;color:#64748b}
-footer a{color:#facc15;text-decoration:none;font-weight:800;margin:0 8px;cursor:pointer}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Segoe UI',Tahoma,sans-serif
+}
+
+body{
+  background:#f8fafc;
+  color:#1e293b
+}
+
+[dir="ltr"] body{text-align:left}
+[dir="rtl"] body{text-align:right}
+
+header{
+  background:#0f172a;
+  color:#fff;
+  padding:12px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+  position:sticky;
+  top:0;
+  z-index:50
+}
+
+header h1{
+  font-size:19px
+}
+
+header h1 span{
+  color:#facc15
+}
+
+.btn{
+  background:#facc15;
+  color:#0f172a;
+  border:none;
+  padding:9px 16px;
+  border-radius:10px;
+  font-weight:800;
+  cursor:pointer;
+  font-size:13px
+}
+
+.btn:hover{
+  opacity:.92
+}
+
+.btn:disabled{
+  opacity:.5;
+  cursor:not-allowed
+}
+
+.btn-outline{
+  background:transparent;
+  color:#fff;
+  border:1.5px solid #334155
+}
+
+.btn-delete{
+  background:#fee2e2;
+  color:#b91c1c;
+  border:1px solid #fecaca
+}
+
+.header-actions{
+  display:flex;
+  gap:7px;
+  align-items:center;
+  flex-wrap:wrap
+}
+
+.user-chip{
+  background:#1e293b;
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:11px
+}
+
+.lang-switcher{
+  display:flex;
+  gap:6px
+}
+
+.lang-switcher button{
+  border:1px solid #d1d5db;
+  background:#fff;
+  border-radius:8px;
+  padding:5px 9px;
+  cursor:pointer;
+  font-weight:700;
+  font-size:12px
+}
+
+.lang-switcher button.active{
+  background:#facc15;
+  border-color:#facc15
+}
+
+.trust-bar{
+  background:#f0fdf4;
+  padding:8px 16px;
+  display:flex;
+  gap:14px;
+  overflow:auto;
+  font-size:11px;
+  color:#166534;
+  border-bottom:1px solid #bbf7d0
+}
+
+.trust-bar span{
+  white-space:nowrap;
+  font-weight:700
+}
+
+.hero{
+  background:linear-gradient(135deg,#0f172a,#1e3a8a);
+  color:#fff;
+  padding:30px 16px;
+  text-align:center
+}
+
+.filters{
+  background:#fff;
+  padding:12px 16px;
+  display:flex;
+  gap:8px;
+  overflow:auto;
+  border-bottom:1px solid #e2e8f0
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:14px;
+  padding:16px
+}
+
+.card{
+  background:#fff;
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 4px 16px rgba(0,0,0,.07);
+  border:2px solid #e2e8f0;
+  position:relative
+}
+
+.card.featured{
+  border-color:#facc15;
+  box-shadow:0 5px 22px rgba(250,204,21,.25)
+}
+
+.card img{
+  width:100%;
+  height:170px;
+  object-fit:cover;
+  background:#e2e8f0
+}
+
+.card-body{
+  padding:12px
+}
+
+.price{
+  color:#16a34a;
+  font-weight:900;
+  font-size:17px
+}
+
+.meta{
+  color:#64748b;
+  font-size:11px;
+  margin:3px 0
+}
+
+.badge{
+  padding:3px 8px;
+  border-radius:20px;
+  font-size:10px;
+  font-weight:800;
+  display:inline-block;
+  margin:2px;
+  background:#dbeafe;
+  color:#1e40af
+}
+
+.featured-badge{
+  position:absolute;
+  top:10px;
+  inset-inline-start:10px;
+  background:#facc15;
+  color:#0f172a;
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:900;
+  z-index:2
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.65);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:60;
+  padding:12px
+}
+
+.modal.active{
+  display:flex
+}
+
+.modal-box{
+  background:#fff;
+  border-radius:18px;
+  padding:22px;
+  width:100%;
+  max-width:440px;
+  max-height:92vh;
+  overflow:auto;
+  position:relative
+}
+
+.close-x{
+  position:absolute;
+  top:12px;
+  inset-inline-end:12px;
+  background:#f1f5f9;
+  border:none;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  cursor:pointer
+}
+
+.input{
+  width:100%;
+  padding:12px;
+  border:1.5px solid #cbd5e1;
+  border-radius:10px;
+  margin:7px 0;
+  font-size:13px;
+  background:#fff
+}
+
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px
+}
+
+.note{
+  background:#f0fdf4;
+  border:1.5px solid #22c55e;
+  border-radius:12px;
+  padding:10px;
+  margin:8px 0;
+  font-size:11px
+}
+
+.pl{
+  white-space:pre-line;
+  font-size:12px;
+  line-height:1.8
+}
+
+.chat-container{
+  display:flex;
+  flex-direction:column;
+  height:460px
+}
+
+.chat-messages{
+  flex:1;
+  overflow:auto;
+  padding:10px;
+  background:#f1f5f9;
+  border-radius:14px;
+  margin-bottom:8px;
+  display:flex;
+  flex-direction:column;
+  border:2px solid #e2e8f0
+}
+
+.msg{
+  padding:10px 12px;
+  border-radius:14px;
+  margin:5px 0;
+  max-width:82%;
+  font-size:12px;
+  word-break:break-word
+}
+
+.msg.other{
+  background:#fff;
+  border:1px solid #e2e8f0;
+  align-self:flex-start
+}
+
+.msg.me{
+  background:#0f172a;
+  color:#fff;
+  align-self:flex-end
+}
+
+.msg.system{
+  background:#dcfce7;
+  color:#166534;
+  align-self:center;
+  font-size:10px;
+  text-align:center
+}
+
+.chat-ok,
+.chat-error{
+  padding:8px;
+  border-radius:8px;
+  margin:6px 0;
+  font-size:12px
+}
+
+.chat-ok{
+  color:#166534;
+  background:#f0fdf4;
+  border:1px solid #bbf7d0
+}
+
+.chat-error{
+  color:#b91c1c;
+  background:#fef2f2;
+  border:1px solid #fecaca
+}
+
+.page{
+  max-width:900px;
+  margin:0 auto;
+  padding:18px
+}
+
+.box{
+  background:#fff;
+  border-radius:16px;
+  padding:16px;
+  margin:12px 0;
+  border:2px solid #e2e8f0
+}
+
+.box h3{
+  margin-bottom:8px
+}
+
+.fab{
+  position:fixed;
+  bottom:20px;
+  inset-inline-start:20px;
+  z-index:55;
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  border:none;
+  font-size:22px;
+  cursor:pointer;
+  background:#EA4335;
+  color:#fff;
+  box-shadow:0 4px 12px rgba(0,0,0,.3)
+}
+
+footer{
+  background:#0f172a;
+  color:#fff;
+  padding:26px 16px 18px;
+  margin-top:20px;
+  font-size:12px
+}
+
+.footer-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:18px;
+  max-width:900px;
+  margin:0 auto
+}
+
+footer h4{
+  color:#facc15;
+  margin-bottom:8px;
+  font-size:13px
+}
+
+footer .fcol a{
+  display:block;
+  color:#cbd5e1;
+  text-decoration:none;
+  margin:5px 0;
+  cursor:pointer;
+  font-size:12px
+}
+
+footer .fcol a:hover{
+  color:#fff
+}
+
+footer .fcol p{
+  color:#94a3b8;
+  font-size:11px;
+  line-height:1.7
+}
+
+footer .copy{
+  text-align:center;
+  border-top:1px solid #1e293b;
+  margin-top:16px;
+  padding-top:12px;
+  font-size:11px;
+  color:#64748b
+}
+
+footer a{
+  color:#facc15;
+  text-decoration:none;
+  font-weight:800;
+  margin:0 8px;
+  cursor:pointer
+}
+
+/* ================================
+   لوحة التحكم
+================================ */
+
+.dashboard-page{
+  max-width:1180px;
+  margin:0 auto;
+  padding:18px
+}
+
+.dashboard-head{
+  background:linear-gradient(135deg,#0f172a,#1e3a8a);
+  color:#fff;
+  border-radius:20px;
+  padding:22px;
+  margin-bottom:16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  flex-wrap:wrap
+}
+
+.dashboard-head h2{
+  font-size:22px;
+  margin-bottom:5px
+}
+
+.dashboard-head p{
+  color:#cbd5e1;
+  font-size:12px
+}
+
+.dashboard-layout{
+  display:grid;
+  grid-template-columns:230px 1fr;
+  gap:16px;
+  align-items:start
+}
+
+.dashboard-sidebar{
+  background:#fff;
+  border:2px solid #e2e8f0;
+  border-radius:18px;
+  padding:10px;
+  position:sticky;
+  top:80px
+}
+
+.dashboard-nav{
+  width:100%;
+  border:none;
+  background:transparent;
+  padding:12px;
+  border-radius:11px;
+  text-align:start;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:800;
+  color:#475569;
+  margin-bottom:4px
+}
+
+.dashboard-nav:hover{
+  background:#f1f5f9
+}
+
+.dashboard-nav.active{
+  background:#0f172a;
+  color:#fff
+}
+
+.dashboard-content{
+  min-width:0
+}
+
+.dashboard-section{
+  display:none
+}
+
+.dashboard-section.active{
+  display:block
+}
+
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:14px
+}
+
+.stat-card{
+  background:#fff;
+  border:2px solid #e2e8f0;
+  border-radius:16px;
+  padding:16px
+}
+
+.stat-card .icon{
+  font-size:24px;
+  margin-bottom:8px
+}
+
+.stat-card strong{
+  display:block;
+  font-size:22px;
+  color:#0f172a
+}
+
+.stat-card span{
+  color:#64748b;
+  font-size:11px
+}
+
+.dashboard-box{
+  background:#fff;
+  border:2px solid #e2e8f0;
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:14px
+}
+
+.dashboard-box h3{
+  margin-bottom:12px;
+  font-size:15px
+}
+
+.dashboard-ad{
+  display:flex;
+  gap:12px;
+  border:1px solid #e2e8f0;
+  border-radius:14px;
+  padding:10px;
+  margin-bottom:9px;
+  align-items:center
+}
+
+.dashboard-ad img{
+  width:95px;
+  height:70px;
+  object-fit:cover;
+  border-radius:10px
+}
+
+.dashboard-ad-info{
+  flex:1;
+  min-width:0
+}
+
+.dashboard-ad-info strong{
+  display:block;
+  font-size:13px;
+  margin-bottom:4px
+}
+
+.dashboard-ad-actions{
+  display:flex;
+  gap:5px;
+  flex-wrap:wrap
+}
+
+.dashboard-ad-actions button{
+  font-size:10px;
+  padding:6px 9px
+}
+
+.dashboard-premium{
+  background:linear-gradient(135deg,#fefce8,#fff7ed);
+  border:2px solid #facc15;
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:14px
+}
+
+.dashboard-premium h3{
+  color:#92400e;
+  margin-bottom:7px
+}
+
+.plan-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-top:12px
+}
+
+.plan-card{
+  background:#fff;
+  border:2px solid #e2e8f0;
+  border-radius:16px;
+  padding:16px;
+  text-align:center;
+  position:relative
+}
+
+.plan-card.popular{
+  border-color:#facc15
+}
+
+.plan-card h4{
+  font-size:15px;
+  margin-bottom:7px
+}
+
+.plan-price{
+  font-size:21px;
+  font-weight:900;
+  color:#16a34a;
+  margin:8px 0
+}
+
+.plan-card ul{
+  list-style:none;
+  font-size:11px;
+  color:#64748b;
+  line-height:2;
+  margin:8px 0 12px
+}
+
+.profile-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px
+}
+
+.profile-item{
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:12px;
+  padding:12px
+}
+
+.profile-item small{
+  display:block;
+  color:#64748b;
+  font-size:10px;
+  margin-bottom:4px
+}
+
+.profile-item strong{
+  font-size:12px;
+  word-break:break-word
+}
+
+.empty-dashboard{
+  text-align:center;
+  padding:35px 15px;
+  color:#64748b;
+  font-size:12px
+}
+
+.dashboard-message{
+  border:1px solid #e2e8f0;
+  border-radius:13px;
+  padding:12px;
+  margin-bottom:8px;
+  background:#fff
+}
+
+.dashboard-message strong{
+  font-size:12px
+}
+
+.dashboard-message p{
+  font-size:11px;
+  color:#475569;
+  margin-top:5px
+}
+
+.dashboard-message small{
+  font-size:9px;
+  color:#94a3b8
+}
+
+@media(max-width:800px){
+  .dashboard-layout{
+    grid-template-columns:1fr
+  }
+
+  .dashboard-sidebar{
+    position:static;
+    display:flex;
+    overflow:auto;
+    gap:4px
+  }
+
+  .dashboard-nav{
+    min-width:max-content;
+    width:auto
+  }
+
+  .stats-grid{
+    grid-template-columns:repeat(2,1fr)
+  }
+
+  .plan-grid{
+    grid-template-columns:1fr
+  }
+}
+
+@media(max-width:520px){
+  .grid{
+    grid-template-columns:1fr
+  }
+
+  .row{
+    grid-template-columns:1fr
+  }
+
+  .profile-grid{
+    grid-template-columns:1fr
+  }
+
+  .dashboard-ad{
+    align-items:flex-start
+  }
+
+  .dashboard-ad img{
+    width:80px;
+    height:60px
+  }
+}
 </style>
 </head>
+
 <body>
+
 <header>
 <h1>🚗 <span>Thika Auto</span> .dz</h1>
+
 <div class="header-actions" id="headerActions"></div>
+
 <div class="lang-switcher">
 <button type="button" data-lang="ar" onclick="setLanguage('ar')">🇩🇿 العربية</button>
 <button type="button" data-lang="fr" onclick="setLanguage('fr')">🇫🇷 Français</button>
 <button type="button" data-lang="en" onclick="setLanguage('en')">🇬🇧 English</button>
 </div>
 </header>
-<div class="trust-bar"><span data-i18n="trust1"></span><span data-i18n="trust2"></span><span data-i18n="trust3"></span></div>
+
+<div class="trust-bar">
+<span data-i18n="trust1"></span>
+<span data-i18n="trust2"></span>
+<span data-i18n="trust3"></span>
+</div>
+
+<!-- ================= HOME ================= -->
 
 <div id="homePage" class="view">
+
 <div class="hero">
 <h2 style="font-size:20px" data-i18n="heroTitle"></h2>
+
 <p style="font-size:12px;margin-top:6px;opacity:.9" data-i18n="heroText"></p>
-<p id="status" style="margin-top:10px;font-size:11px;opacity:.75" data-i18n="loading"></p>
+
+<p id="status"
+style="margin-top:10px;font-size:11px;opacity:.75"
+data-i18n="loading"></p>
 </div>
+
 <div class="filters">
-<select id="filterWilaya" class="input" style="margin:0;min-width:160px" onchange="renderCars()"></select>
-<input id="filterSearch" class="input" data-i18n-ph="search" style="margin:0;flex:1;min-width:140px" oninput="renderCars()">
-<button class="btn" onclick="renderCars()" style="white-space:nowrap" data-i18n="filter"></button>
+
+<select id="filterCategory"
+class="input"
+style="margin:0;min-width:150px"
+onchange="renderCars()">
+</select>
+
+<select id="filterWilaya"
+class="input"
+style="margin:0;min-width:160px"
+onchange="renderCars()">
+</select>
+
+<input
+id="filterSearch"
+class="input"
+name="carSearchQuery"
+autocomplete="off"
+data-i18n-ph="search"
+style="margin:0;flex:1;min-width:140px"
+oninput="renderCars()">
+
+<button
+class="btn"
+onclick="renderCars()"
+style="white-space:nowrap"
+data-i18n="filter">
+</button>
+
 </div>
-<p style="padding:8px 16px;text-align:center;color:#64748b;font-size:11px" data-i18n="ownerHelp"></p>
+
+<p
+style="padding:8px 16px;text-align:center;color:#64748b;font-size:11px"
+data-i18n="ownerHelp">
+</p>
+
 <div class="grid" id="carsGrid"></div>
+
 </div>
+
+<!-- ================= ARCHIVE ================= -->
 
 <div id="archivePage" class="page view" style="display:none">
+
 <h2 data-i18n="archiveTitle"></h2>
+
 <div class="note" data-i18n="archiveInfo"></div>
+
 <div class="box">
-<input class="input" id="archiveSearch" data-i18n-ph="archivePh">
-<button class="btn" onclick="searchArchive()" data-i18n="archiveBtn"></button>
+
+<input
+class="input"
+id="archiveSearch"
+data-i18n-ph="archivePh">
+
+<button
+class="btn"
+onclick="searchArchive()"
+data-i18n="archiveBtn">
+</button>
+
 <div id="archiveResults" style="margin-top:12px"></div>
+
 </div>
-<button class="btn" onclick="showPage('home')" data-i18n="back"></button>
+
+<button
+class="btn"
+onclick="showPage('home')"
+data-i18n="back">
+</button>
+
 </div>
+
+<!-- ================= POLICY ================= -->
 
 <div id="policyPage" class="page view" style="display:none">
+
 <h2 data-i18n="policyTitle"></h2>
-<div class="box"><h3 data-i18n="pol1t"></h3><p class="pl" data-i18n="pol1b"></p></div>
-<div class="box"><h3 data-i18n="pol2t"></h3><p class="pl" data-i18n="pol2b"></p></div>
-<div class="box"><h3 data-i18n="pol3t"></h3><p class="pl" data-i18n="pol3b"></p></div>
-<button class="btn" onclick="showPage('home')" data-i18n="back"></button>
+
+<div class="box">
+<h3 data-i18n="pol1t"></h3>
+<p class="pl" data-i18n="pol1b"></p>
 </div>
 
-<div class="modal" id="loginModal"><div class="modal-box">
-<button class="close-x" onclick="closeModal('loginModal')">✕</button>
+<div class="box">
+<h3 data-i18n="pol2t"></h3>
+<p class="pl" data-i18n="pol2b"></p>
+</div>
+
+<div class="box">
+<h3 data-i18n="pol3t"></h3>
+<p class="pl" data-i18n="pol3b"></p>
+</div>
+
+<button
+class="btn"
+onclick="showPage('home')"
+data-i18n="back">
+</button>
+
+</div>
+
+<!-- ================= DASHBOARD ================= -->
+
+<div id="dashboardPage" class="dashboard-page view" style="display:none">
+
+<div class="dashboard-head">
+
+<div>
+<h2>📊 <span data-i18n="dashboardTitle"></span></h2>
+<p data-i18n="dashboardWelcome"></p>
+</div>
+
+<button
+class="btn"
+onclick="openAdd()"
+data-i18n="addBtn">
+</button>
+
+</div>
+
+<div class="dashboard-layout">
+
+<aside class="dashboard-sidebar">
+
+<button
+class="dashboard-nav active"
+onclick="dashboardTab('overview',this)"
+data-i18n="dashOverview">
+</button>
+
+<button
+class="dashboard-nav"
+onclick="dashboardTab('myAds',this)"
+data-i18n="dashAds">
+</button>
+
+<button
+class="dashboard-nav"
+onclick="dashboardTab('messages',this)"
+data-i18n="dashMessages">
+</button>
+
+<button
+class="dashboard-nav"
+onclick="dashboardTab('premium',this)"
+data-i18n="dashPremium">
+</button>
+
+<button
+class="dashboard-nav"
+onclick="dashboardTab('profile',this)"
+data-i18n="dashProfile">
+</button>
+
+<button
+class="dashboard-nav"
+onclick="showPage('archive')"
+data-i18n="archiveShort">
+</button>
+
+</aside>
+
+<main class="dashboard-content">
+
+<!-- OVERVIEW -->
+
+<section
+id="dashOverview"
+class="dashboard-section active">
+
+<div class="stats-grid">
+
+<div class="stat-card">
+<div class="icon">🚗</div>
+<strong id="dashAdsCount">0</strong>
+<span data-i18n="statAds"></span>
+</div>
+
+<div class="stat-card">
+<div class="icon">💬</div>
+<strong id="dashMessagesCount">0</strong>
+<span data-i18n="statMessages"></span>
+</div>
+
+<div class="stat-card">
+<div class="icon">⭐</div>
+<strong id="dashFeaturedCount">0</strong>
+<span data-i18n="statFeatured"></span>
+</div>
+
+<div class="stat-card">
+<div class="icon">👤</div>
+<strong id="dashAccountStatus">✓</strong>
+<span data-i18n="statAccount"></span>
+</div>
+
+</div>
+
+<div class="dashboard-premium">
+
+<h3>⭐ <span data-i18n="premiumTitle"></span></h3>
+
+<p
+style="font-size:12px;color:#78350f"
+data-i18n="premiumText">
+</p>
+
+<button
+class="btn"
+style="margin-top:10px"
+onclick="dashboardTab('premium')"
+data-i18n="seePlans">
+</button>
+
+</div>
+
+<div class="dashboard-box">
+
+<h3 data-i18n="recentAds"></h3>
+
+<div id="dashboardRecentAds"></div>
+
+</div>
+
+</section>
+
+<!-- MY ADS -->
+
+<section
+id="dashMyAds"
+class="dashboard-section">
+
+<div class="dashboard-box">
+
+<h3 data-i18n="myAdsTitle"></h3>
+
+<div
+id="dashboardAdsList">
+</div>
+
+</div>
+
+</section>
+
+<!-- MESSAGES -->
+
+<section
+id="dashMessages"
+class="dashboard-section">
+
+<div class="dashboard-box">
+
+<h3 data-i18n="myMessagesTitle"></h3>
+
+<div
+id="dashboardMessagesList">
+</div>
+
+</div>
+
+</section>
+
+<!-- PREMIUM -->
+
+<section
+id="dashPremium"
+class="dashboard-section">
+
+<div class="dashboard-box">
+
+<h3>⭐ <span data-i18n="premiumPlans"></span></h3>
+
+<p
+style="font-size:11px;color:#64748b"
+data-i18n="premiumExplain">
+</p>
+
+<div class="plan-grid">
+
+<div class="plan-card popular">
+
+<div class="badge">⭐</div>
+
+<h4 data-i18n="individualPlan"></h4>
+
+<div class="plan-price">
+<span data-i18n="priceContact"></span>
+</div>
+
+<ul>
+<li data-i18n="individualFeature1"></li>
+<li data-i18n="individualFeature2"></li>
+<li data-i18n="individualFeature3"></li>
+</ul>
+
+<button
+class="btn"
+onclick="startPremium('individual')"
+data-i18n="choosePlan">
+</button>
+
+</div>
+
+<div class="plan-card">
+
+<h4>🥈 <span data-i18n="silverPlan"></span></h4>
+
+<div class="plan-price">
+<span data-i18n="priceContact"></span>
+</div>
+
+<ul>
+<li data-i18n="silverFeature1"></li>
+<li data-i18n="silverFeature2"></li>
+<li data-i18n="silverFeature3"></li>
+</ul>
+
+<button
+class="btn"
+onclick="startPremium('silver')"
+data-i18n="choosePlan">
+</button>
+
+</div>
+
+<div class="plan-card">
+
+<h4>🥇 <span data-i18n="goldPlan"></span></h4>
+
+<div class="plan-price">
+<span data-i18n="priceContact"></span>
+</div>
+
+<ul>
+<li data-i18n="goldFeature1"></li>
+<li data-i18n="goldFeature2"></li>
+<li data-i18n="goldFeature3"></li>
+</ul>
+
+<button
+class="btn"
+onclick="startPremium('gold')"
+data-i18n="choosePlan">
+</button>
+
+</div>
+
+</div>
+
+<div class="note" style="margin-top:15px">
+<strong>🔐</strong>
+<span data-i18n="paymentSecurity"></span>
+</div>
+
+</div>
+
+<div class="dashboard-box">
+
+<h3 data-i18n="featuredAdsTitle"></h3>
+
+<div id="dashboardFeaturedAds"></div>
+
+</div>
+
+</section>
+
+<!-- PROFILE -->
+
+<section
+id="dashProfile"
+class="dashboard-section">
+
+<div class="dashboard-box">
+
+<h3 data-i18n="profileTitle"></h3>
+
+<div
+class="profile-grid"
+id="dashboardProfile">
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+</div>
+
+</div>
+
+<!-- ================= LOGIN ================= -->
+
+<div class="modal" id="loginModal">
+
+<div class="modal-box">
+
+<button
+class="close-x"
+onclick="closeModal('loginModal')">
+✕
+</button>
+
 <h3 data-i18n="loginTitle"></h3>
-<p style="font-size:11px;color:#64748b;margin:10px 0" data-i18n="loginNote"></p>
-<input class="input" id="loginEmail" type="email" data-i18n-ph="email">
-<input class="input" id="loginPassword" type="password" data-i18n-ph="password">
-<button class="btn" onclick="doLogin()" style="width:100%;padding:12px;margin-top:8px" data-i18n="loginBtn"></button>
-<p style="font-size:11px;text-align:center;margin-top:8px"><a href="#" onclick="openForgotPassword();return false" style="color:#64748b" data-i18n="forgotPass"></a></p>
-<p style="font-size:11px;text-align:center;margin-top:12px"><span data-i18n="noAccount"></span> <a href="#" onclick="closeModal('loginModal');openModal('signupModal');return false" style="color:#1e40af;font-weight:800" data-i18n="signupTitle"></a></p>
-<p id="loginError" style="color:#ef4444;font-size:11px;margin-top:8px;display:none"></p>
-</div></div>
 
-<div class="modal" id="forgotModal"><div class="modal-box">
-<button class="close-x" onclick="closeModal('forgotModal')">✕</button>
+<p
+style="font-size:11px;color:#64748b;margin:10px 0"
+data-i18n="loginNote">
+</p>
+
+<input
+class="input"
+id="loginEmail"
+type="email"
+data-i18n-ph="email">
+
+<input
+class="input"
+id="loginPassword"
+type="password"
+data-i18n-ph="password">
+
+<button
+class="btn"
+onclick="doLogin()"
+style="width:100%;padding:12px;margin-top:8px"
+data-i18n="loginBtn">
+</button>
+
+<p
+style="font-size:11px;text-align:center;margin-top:8px">
+
+<a
+href="#"
+onclick="openForgotPassword();return false"
+style="color:#64748b"
+data-i18n="forgotPass">
+</a>
+
+</p>
+
+<p
+style="font-size:11px;text-align:center;margin-top:12px">
+
+<span data-i18n="noAccount"></span>
+
+<a
+href="#"
+onclick="closeModal('loginModal');openModal('signupModal');return false"
+style="color:#1e40af;font-weight:800"
+data-i18n="signupTitle">
+</a>
+
+</p>
+
+<p
+id="loginError"
+style="color:#ef4444;font-size:11px;margin-top:8px;display:none">
+</p>
+
+</div>
+</div>
+
+<!-- ================= FORGOT ================= -->
+
+<div class="modal" id="forgotModal">
+
+<div class="modal-box">
+
+<button
+class="close-x"
+onclick="closeModal('forgotModal')">
+✕
+</button>
+
 <h3 data-i18n="forgotTitle"></h3>
-<p style="font-size:11px;color:#64748b;margin:10px 0" data-i18n="forgotNote"></p>
-<input class="input" id="forgotEmail" type="email" data-i18n-ph="email">
-<button class="btn" onclick="sendPasswordReset()" style="width:100%;padding:12px" data-i18n="forgotBtn"></button>
-<p id="forgotError" style="color:#ef4444;font-size:11px;margin-top:8px;display:none"></p>
-</div></div>
 
-<div class="modal" id="resetModal"><div class="modal-box">
+<p
+style="font-size:11px;color:#64748b;margin:10px 0"
+data-i18n="forgotNote">
+</p>
+
+<input
+class="input"
+id="forgotEmail"
+type="email"
+data-i18n-ph="email">
+
+<button
+class="btn"
+onclick="sendPasswordReset()"
+style="width:100%;padding:12px"
+data-i18n="forgotBtn">
+</button>
+
+<p
+id="forgotError"
+style="color:#ef4444;font-size:11px;margin-top:8px;display:none">
+</p>
+
+</div>
+</div>
+
+<!-- ================= RESET ================= -->
+
+<div class="modal" id="resetModal">
+
+<div class="modal-box">
+
 <h3 data-i18n="resetTitle"></h3>
-<p style="font-size:11px;color:#64748b;margin:10px 0" data-i18n="resetNote"></p>
-<input class="input" id="newPassword" type="password" data-i18n-ph="newPasswordPh">
-<button class="btn" onclick="updatePassword()" style="width:100%;padding:12px" data-i18n="resetBtn"></button>
-<p id="resetError" style="color:#ef4444;font-size:11px;margin-top:8px;display:none"></p>
-</div></div>
 
-<div class="modal" id="signupModal"><div class="modal-box">
-<button class="close-x" onclick="closeModal('signupModal')">✕</button>
+<p
+style="font-size:11px;color:#64748b;margin:10px 0"
+data-i18n="resetNote">
+</p>
+
+<input
+class="input"
+id="newPassword"
+type="password"
+data-i18n-ph="newPasswordPh">
+
+<button
+class="btn"
+onclick="updatePassword()"
+style="width:100%;padding:12px"
+data-i18n="resetBtn">
+</button>
+
+<p
+id="resetError"
+style="color:#ef4444;font-size:11px;margin-top:8px;display:none">
+</p>
+
+</div>
+</div>
+
+<!-- ================= SIGNUP ================= -->
+
+<div class="modal" id="signupModal">
+
+<div class="modal-box">
+
+<button
+class="close-x"
+onclick="closeModal('signupModal')">
+✕
+</button>
+
 <h3 data-i18n="signupTitle"></h3>
-<input class="input" id="signupUsername" data-i18n-ph="username">
-<input class="input" id="signupName" data-i18n-ph="fullName">
-<input class="input" id="signupPhone" type="tel" data-i18n-ph="phone">
-<input class="input" id="signupEmail" type="email" data-i18n-ph="email">
-<input class="input" id="signupPassword" type="password" data-i18n-ph="password">
-<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#475569;margin:2px 0 8px;cursor:pointer">
-<input type="checkbox" style="width:auto;margin:0" onchange="document.getElementById('signupPassword').type=this.checked?'text':'password'">
+
+<input
+class="input"
+id="signupUsername"
+data-i18n-ph="username">
+
+<input
+class="input"
+id="signupName"
+data-i18n-ph="fullName">
+
+<input
+class="input"
+id="signupPhone"
+type="tel"
+data-i18n-ph="phone">
+
+<input
+class="input"
+id="signupEmail"
+type="email"
+data-i18n-ph="email">
+
+<input
+class="input"
+id="signupPassword"
+type="password"
+data-i18n-ph="password">
+
+<label
+style="display:flex;align-items:center;gap:6px;font-size:12px;color:#475569;margin:2px 0 8px;cursor:pointer">
+
+<input
+type="checkbox"
+style="width:auto;margin:0"
+onchange="document.getElementById('signupPassword').type=this.checked?'text':'password'">
+
 <span data-i18n="showPass"></span>
+
 </label>
-<p style="font-size:10px;color:#94a3b8;margin:0 0 8px" data-i18n="usernameNote"></p>
-<button class="btn" onclick="doSignup()" style="width:100%;padding:12px" data-i18n="signupBtn"></button>
-<p style="font-size:11px;text-align:center;margin-top:12px"><span data-i18n="haveAccount"></span> <a href="#" onclick="closeModal('signupModal');openModal('loginModal');return false" style="color:#1e40af;font-weight:800" data-i18n="loginTitle"></a></p>
-<p id="signupError" style="color:#ef4444;font-size:11px;margin-top:8px;display:none"></p>
-</div></div>
 
-<div class="modal" id="addModal"><div class="modal-box">
-<button class="close-x" onclick="closeModal('addModal')">✕</button>
+<p
+style="font-size:10px;color:#94a3b8;margin:0 0 8px"
+data-i18n="usernameNote">
+</p>
+
+<button
+class="btn"
+onclick="doSignup()"
+style="width:100%;padding:12px"
+data-i18n="signupBtn">
+</button>
+
+<p
+style="font-size:11px;text-align:center;margin-top:12px">
+
+<span data-i18n="haveAccount"></span>
+
+<a
+href="#"
+onclick="closeModal('signupModal');openModal('loginModal');return false"
+style="color:#1e40af;font-weight:800"
+data-i18n="loginTitle">
+</a>
+
+</p>
+
+<p
+id="signupError"
+style="color:#ef4444;font-size:11px;margin-top:8px;display:none">
+</p>
+
+</div>
+</div>
+
+<!-- ================= ADD CAR ================= -->
+
+<div class="modal" id="addModal">
+
+<div class="modal-box">
+
+<button
+class="close-x"
+onclick="closeModal('addModal')">
+✕
+</button>
+
 <h3 data-i18n="addCarTitle"></h3>
-<input class="input" id="brand" data-i18n-ph="brand"><input class="input" id="model" data-i18n-ph="model">
-<div class="row"><input class="input" id="year" type="number" data-i18n-ph="year"><input class="input" id="price" type="number" data-i18n-ph="priceDzd"></div>
-<div class="row"><input class="input" id="mileage" type="number" placeholder="km"><select class="input" id="wilaya"></select></div>
-<div class="row"><select class="input" id="fuel"><option>بنزين</option><option>ديزل</option><option>غاز</option><option>هجين</option></select><select class="input" id="gearbox"><option>يدوي</option><option>أوتوماتيك</option></select></div>
-<input class="input" id="phone" data-i18n-ph="phone">
-<div style="background:#f0fdf4;padding:12px;border-radius:12px;border:2px dashed #22c55e;margin:10px 0">
-<label style="font-weight:900;display:block" data-i18n="photos"></label>
-<input type="file" id="carImages" multiple accept="image/*" class="input" style="background:#fff;margin-top:8px">
-</div>
-<textarea class="input" id="desc" data-i18n-ph="description"></textarea>
-<div class="row" style="margin-top:12px"><button class="btn" style="background:#e2e8f0" onclick="closeModal('addModal')" data-i18n="cancel"></button><button class="btn" id="publishBtn" onclick="addCar()" data-i18n="publish"></button></div>
-</div></div>
 
-<div class="modal" id="chatModal"><div class="modal-box" style="max-width:560px">
-<button class="close-x" onclick="closeModal('chatModal')">✕</button>
-<div id="chatCarTitle" style="font-weight:900;margin-bottom:8px"></div>
-<span class="badge" data-i18n="chatBadge"></span>
-<div class="chat-container">
-<div class="chat-messages" id="chatMessages"></div>
-<div class="note" data-i18n="chatNote"></div>
-<button type="button" class="quick-btn" onclick="sendQuickMessage()" data-i18n="quickAvailable" style="align-self:flex-start;background:#e0f2fe;color:#0369a1;border:1px solid #bae6fd;padding:6px 12px;border-radius:20px;font-size:12px;cursor:pointer;font-weight:700;margin-bottom:8px"></button>
-<div style="display:flex;gap:8px"><input class="input" id="chatInput" data-i18n-ph="msgPh" style="flex:1;margin:0" onkeypress="if(event.key==='Enter')sendMessage()"><button class="btn" onclick="sendMessage()" style="margin:0" data-i18n="send"></button></div>
+<select class="input" id="category"></select>
+
+<input
+class="input"
+id="brand"
+data-i18n-ph="brand">
+
+<input
+class="input"
+id="model"
+data-i18n-ph="model">
+
+<div class="row">
+
+<input
+class="input"
+id="year"
+type="number"
+data-i18n-ph="year">
+
+<input
+class="input"
+id="price"
+type="number"
+data-i18n-ph="priceDzd">
+
 </div>
-</div></div>
+
+<div class="row">
+
+<input
+class="input"
+id="mileage"
+type="number"
+placeholder="km">
+
+<select
+class="input"
+id="wilaya">
+</select>
+
+</div>
+
+<div class="row">
+
+<select
+class="input"
+id="fuel">
+
+<option>بنزين</option>
+<option>ديزل</option>
+<option>غاز</option>
+<option>هجين</option>
+
+</select>
+
+<select
+class="input"
+id="gearbox">
+
+<option>يدوي</option>
+<option>أوتوماتيك</option>
+
+</select>
+
+</div>
+
+<input
+class="input"
+id="phone"
+data-i18n-ph="phone">
+
+<div
+style="background:#f0fdf4;padding:12px;border-radius:12px;border:2px dashed #22c55e;margin:10px 0">
+
+<label
+style="font-weight:900;display:block"
+data-i18n="photos">
+</label>
+
+<input
+type="file"
+id="carImages"
+multiple
+accept="image/*"
+class="input"
+style="background:#fff;margin-top:8px">
+
+</div>
+
+<textarea
+class="input"
+id="desc"
+data-i18n-ph="description">
+</textarea>
+
+<div
+class="row"
+style="margin-top:12px">
+
+<button
+class="btn"
+style="background:#e2e8f0"
+onclick="closeModal('addModal')"
+data-i18n="cancel">
+</button>
+
+<button
+class="btn"
+id="publishBtn"
+onclick="addCar()"
+data-i18n="publish">
+</button>
+
+</div>
+
+</div>
+</div>
+
+<!-- ================= CHAT ================= -->
+
+<div class="modal" id="chatModal">
+
+<div class="modal-box" style="max-width:560px">
+
+<button
+class="close-x"
+onclick="closeModal('chatModal')">
+✕
+</button>
+
+<div
+id="chatCarTitle"
+style="font-weight:900;margin-bottom:8px">
+</div>
+
+<span
+class="badge"
+data-i18n="chatBadge">
+</span>
+
+<div class="chat-container">
+
+<div
+class="chat-messages"
+id="chatMessages">
+</div>
+
+<div
+class="note"
+data-i18n="chatNote">
+</div>
+
+<button
+type="button"
+class="quick-btn"
+onclick="sendQuickMessage()"
+data-i18n="quickAvailable"
+style="align-self:flex-start;background:#e0f2fe;color:#0369a1;border:1px solid #bae6fd;padding:6px 12px;border-radius:20px;font-size:12px;cursor:pointer;font-weight:700;margin-bottom:8px">
+</button>
+
+<div style="display:flex;gap:8px">
+
+<input
+class="input"
+id="chatInput"
+data-i18n-ph="msgPh"
+style="flex:1;margin:0"
+onkeypress="if(event.key==='Enter')sendMessage()">
+
+<button
+class="btn"
+onclick="sendMessage()"
+style="margin:0"
+data-i18n="send">
+</button>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+<!-- ================= FOOTER ================= -->
 
 <footer>
+
 <div class="footer-grid">
+
 <div class="fcol">
+
 <h4>🚗 Thika Auto .dz</h4>
+
 <p data-i18n="footerDesc"></p>
+
 </div>
+
 <div class="fcol">
+
 <h4 data-i18n="quickLinks"></h4>
-<a onclick="showPage('home')" data-i18n="navHome"></a>
-<a onclick="openAdd()" data-i18n="addBtn"></a>
-<a onclick="showPage('archive')" data-i18n="navArchive"></a>
+
+<a
+onclick="showPage('home')"
+data-i18n="navHome">
+</a>
+
+<a
+onclick="openAdd()"
+data-i18n="addBtn">
+</a>
+
+<a
+onclick="showPage('archive')"
+data-i18n="navArchive">
+</a>
+
 </div>
+
 <div class="fcol">
+
 <h4 data-i18n="legal"></h4>
-<a onclick="showPage('policy')" data-i18n="navPolicy"></a>
-<a onclick="contactUs()" data-i18n="contact"></a>
+
+<a
+onclick="showPage('policy')"
+data-i18n="navPolicy">
+</a>
+
+<a
+onclick="contactUs()"
+data-i18n="contact">
+</a>
+
 </div>
+
 <div class="fcol">
+
 <h4 data-i18n="contactCol"></h4>
-<a onclick="contactUs()">📧 <span id="footerContactEmail"></span></a>
+
+<a onclick="contactUs()">
+📧 <span id="footerContactEmail"></span>
+</a>
+
 <a data-i18n="footerLocation"></a>
+
 </div>
+
 </div>
-<div class="copy" data-i18n="footer"></div>
+
+<div
+class="copy"
+data-i18n="footer">
+</div>
+
 </footer>
-<button class="fab" onclick="contactUs()" data-i18n-title="contact">📧</button>
+
+<button
+class="fab"
+onclick="contactUs()"
+data-i18n-title="contact">
+📧
+</button>
 
 <script>
+
+/* =========================================================
+   إعداد Supabase
+========================================================= */
+
 const SUPABASE_URL="https://gaphmbdbfdssfxgucyfw.supabase.co";
+
 const SUPABASE_KEY="sb_publishable_7c9DrXddWjpn2CSVlIJ25Q_oWAtj47n";
-const CONTACT_EMAIL="karossati1karossati@gmail.com"; // بدّله ببريد Thika Auto
-const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-/* ---------- الترجمة: [ar, fr, en] ---------- */
+const CONTACT_EMAIL="karossati1karossati@gmail.com";
+
+const supabaseClient=supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+
+/* =========================================================
+   الترجمة
+========================================================= */
+
 const D={
-title:["Thika Auto .dz — سوق السيارات","Thika Auto .dz — Marché automobile","Thika Auto .dz — Car Marketplace"],
-trust1:["✅ حسابات مسجلة بالبريد الإلكتروني","✅ Comptes inscrits par e-mail","✅ Accounts registered by email"],
-trust2:["✅ نسخة بريدية من كل رسالة للمشتري والبائع","✅ Copie e-mail de chaque message","✅ Email copy of every message"],
-trust3:["✅ أرشيف للمراجعة عند الحاجة","✅ Archives consultables","✅ Archive available for review"],
-heroTitle:["سوق السيارات في الجزائر 🇩🇿","Le marché automobile en Algérie 🇩🇿","The car marketplace of Algeria 🇩🇿"],
-heroText:["كل محادثة بين البائع والمشتري تُحفظ في الموقع، وتصل نسخة منها بالبريد الإلكتروني للطرفين","Chaque conversation acheteur-vendeur est conservée sur le site et une copie est envoyée par e-mail aux deux parties","Every buyer–seller conversation is stored on the site and a copy is emailed to both parties"],
-loading:["⏳ جاري التحميل...","⏳ Chargement...","⏳ Loading..."],
-count:["✅ {n} سيارة","✅ {n} voiture(s)","✅ {n} car(s)"],
-allWilayas:["كل الولايات (58)","Toutes les wilayas (58)","All wilayas (58)"],
-chooseWilaya:["اختر الولاية *","Choisir la wilaya *","Choose wilaya *"],
-search:["🔍 ابحث عن سيارة...","🔍 Rechercher une voiture...","🔍 Search for a car..."],
-filter:["🔍 فلترة","🔍 Filtrer","🔍 Filter"],
-ownerHelp:["🔐 بعد تسجيل الدخول يظهر زر «حذف إعلاني» على إعلاناتك فقط.","🔐 Après connexion, le bouton « Supprimer mon annonce » apparaît uniquement sur vos annonces.","🔐 After login, the “Delete my ad” button appears only on your own ads."],
-noCars:["لا توجد سيارات مطابقة","Aucune annonce correspondante","No matching cars"],
-login:["🔐 تسجيل الدخول","🔐 Connexion","🔐 Log in"],
-signup:["✨ إنشاء حساب","✨ Créer un compte","✨ Sign up"],
-logout:["خروج","Déconnexion","Log out"],
-addBtn:["+ أضف سيارة","+ Ajouter","+ Add car"],
-archiveShort:["📧 الأرشيف","📧 Archives","📧 Archive"],
-contact:["📧 اتصل بنا","📧 Nous contacter","📧 Contact us"],
-loginTitle:["تسجيل الدخول","Connexion","Log in"],
-forgotPass:["نسيت كلمة السر؟","Mot de passe oublié ?","Forgot password?"],
-forgotTitle:["استرجاع كلمة السر","Récupérer le mot de passe","Recover password"],
-forgotNote:["نبعثولك رابط عبر بريدك الإلكتروني تقدر بيه تختار كلمة سر جديدة.","Nous vous envoyons un lien par e-mail pour choisir un nouveau mot de passe.","We'll email you a link to choose a new password."],
-forgotBtn:["إرسال رابط الاسترجاع 📧","Envoyer le lien 📧","Send reset link 📧"],
-resetLinkSent:["✅ تحقق من بريدك الإلكتروني للرابط.","✅ Vérifiez votre e-mail pour le lien.","✅ Check your email for the link."],
-resetTitle:["تعيين كلمة سر جديدة","Nouveau mot de passe","Set a new password"],
-resetNote:["اكتب كلمة السر الجديدة لحسابك.","Choisissez un nouveau mot de passe pour votre compte.","Choose a new password for your account."],
-newPasswordPh:["كلمة السر الجديدة (6 أحرف على الأقل)","Nouveau mot de passe (6 caractères min.)","New password (min. 6 characters)"],
-resetBtn:["حفظ كلمة السر ✅","Enregistrer ✅","Save password ✅"],
-passUpdated:["✅ تم تحديث كلمة السر بنجاح.","✅ Mot de passe mis à jour.","✅ Password updated successfully."],
-signupTitle:["إنشاء حساب","Créer un compte","Create an account"],
-loginNote:["محادثاتك تُحفظ في قاعدة بيانات الموقع، وتُرسل نسخة منها بالبريد الإلكتروني","Vos conversations sont conservées sur le site et une copie est envoyée par e-mail","Your chats are stored on the site and a copy is sent by email"],
-email:["البريد الإلكتروني","E-mail","Email"],
-password:["كلمة السر","Mot de passe","Password"],
-fullName:["الاسم الكامل","Nom complet","Full name"],
-username:["اسم المستخدم (يظهر للعامة)","Nom d'utilisateur (visible publiquement)","Username (shown publicly)"],
-showPass:["إظهار كلمة السر","Afficher le mot de passe","Show password"],
-usernameNote:["🔒 بريدك ورقم هاتفك لا يظهران للعامة، فقط اسم المستخدم.","🔒 Votre e-mail et téléphone restent privés, seul le nom d'utilisateur est visible.","🔒 Your email and phone stay private; only the username is shown."],
-loginBtn:["دخول ✅","Se connecter ✅","Log in ✅"],
-signupBtn:["إنشاء حساب ✅","Créer le compte ✅","Create account ✅"],
-noAccount:["ما عندكش حساب؟","Pas de compte ?","No account?"],
-haveAccount:["عندك حساب؟","Déjà un compte ?","Have an account?"],
-badEmail:["⚠️ البريد الإلكتروني غير صحيح","⚠️ E-mail invalide","⚠️ Invalid email"],
-shortPass:["⚠️ كلمة السر 6 أحرف على الأقل","⚠️ Mot de passe : 6 caractères minimum","⚠️ Password must be at least 6 characters"],
-badLogin:["⚠️ البريد أو كلمة السر غير صحيحة","⚠️ E-mail ou mot de passe incorrect","⚠️ Wrong email or password"],
-fillData:["⚠️ املأ كل البيانات","⚠️ Remplissez tous les champs","⚠️ Fill in all fields"],
-checkMail:["✅ تحقق من بريدك الإلكتروني لتأكيد الحساب","✅ Vérifiez votre e-mail pour confirmer le compte","✅ Check your email to confirm your account"],
-addCarTitle:["إضافة سيارة","Ajouter une voiture","Add a car"],
-brand:["العلامة *","Marque *","Make *"],
-model:["الموديل *","Modèle *","Model *"],
-year:["السنة","Année","Year"],
-priceDzd:["السعر دج *","Prix DA *","Price DZD *"],
-phone:["رقم الهاتف *","Téléphone *","Phone number *"],
-photos:["📸 صور السيارة (حتى 10 صور) *","📸 Photos du véhicule (10 max) *","📸 Car photos (up to 10) *"],
-description:["وصف السيارة","Description","Description"],
-cancel:["إلغاء","Annuler","Cancel"],
-publish:["نشر الإعلان ✅","Publier ✅","Publish ✅"],
-uploading:["جاري الرفع...","Envoi en cours...","Uploading..."],
-addImage:["أضف صورة واحدة على الأقل","Ajoutez au moins une photo","Add at least one image"],
-uploadFail:["فشل رفع الصور","Échec de l'envoi des photos","Image upload failed"],
-required:["العلامة والموديل والسعر والولاية والهاتف مطلوبة","Marque, modèle, prix, wilaya et téléphone requis","Make, model, price, wilaya and phone are required"],
-published:["تم نشر الإعلان","Annonce publiée","Ad published"],
-delete:["🗑️ حذف إعلاني","🗑️ Supprimer mon annonce","🗑️ Delete my ad"],
-ownerNote:["هذا الإعلان ملكك ويمكنك حذفه في أي وقت.","Cette annonce est à vous, vous pouvez la supprimer à tout moment.","This ad is yours; you can delete it at any time."],
-loginRequired:["يجب تسجيل الدخول أولاً","Vous devez d'abord vous connecter","You must log in first"],
-confirmDelete:["هل أنت متأكد من حذف هذا الإعلان؟ لا يمكن التراجع.","Supprimer cette annonce ? Action irréversible.","Delete this ad? This cannot be undone."],
-deleted:["تم حذف إعلانك","Annonce supprimée","Your ad was deleted"],
-deleteFailed:["تعذر حذف الإعلان","Impossible de supprimer l'annonce","Could not delete the ad"],
-chat:["💬 محادثة","💬 Discuter","💬 Chat"],
-chatBadge:["📧 نسخة بريدية للطرفين","📧 Copie e-mail aux deux parties","📧 Email copy to both parties"],
-chatNote:["كل رسالة تُحفظ في الموقع وتُرسل نسخة منها بالبريد الإلكتروني للبائع والمشتري","Chaque message est conservé sur le site et copié par e-mail au vendeur et à l'acheteur","Every message is stored on the site and copied by email to seller and buyer"],
-quickAvailable:["💬 هل المنتج لا يزال موجود؟","💬 Le produit est-il toujours disponible ?","💬 Is this still available?"],
-quickAvailableMsg:["السلام عليكم، هل السيارة لا تزال متوفرة؟","Bonjour, la voiture est-elle toujours disponible ?","Hello, is the car still available?"],
-msgPh:["اكتب رسالة...","Écrivez un message...","Write a message..."],
-send:["إرسال 📧","Envoyer 📧","Send 📧"],
-noMsgs:["💬 لا توجد رسائل بعد. ابدأ المحادثة.","💬 Aucun message. Démarrez la discussion.","💬 No messages yet. Start the conversation."],
-me:["أنا","Moi","Me"],
-other:["الطرف الآخر","L'autre partie","Other party"],
-loadFail:["تعذر تحميل المحادثة","Impossible de charger la discussion","Could not load the chat"],
-sendFail:["تعذر إرسال الرسالة","Impossible d'envoyer le message","Could not send the message"],
-waitBuyer:["لا توجد محادثة مع مشترٍ بعد. يجب أن يرسل المشتري أول رسالة.","Aucun acheteur n'a encore écrit.","No buyer has written yet."],
-noSeller:["تعذر تحديد حساب صاحب الإعلان","Vendeur introuvable pour cette annonce","Could not identify the ad owner"],
-mailOk:["✅ تم حفظ الرسالة وإرسال نسخة بالبريد للطرفين.","✅ Message enregistré et copie envoyée par e-mail aux deux parties.","✅ Message saved and a copy was emailed to both parties."],
-mailFail:["⚠️ تم حفظ الرسالة، لكن تعذر إرسال نسخة البريد.","⚠️ Message enregistré, mais la copie e-mail a échoué.","⚠️ Message saved, but the email copy failed."],
-archiveTitle:["📧 أرشيف المحادثات","📧 Archives des conversations","📧 Conversation archive"],
-archiveInfo:["المحادثات محفوظة في قاعدة بيانات الموقع، ويُرسل بريد إلكتروني بنسخة منها للطرفين. الموقع لا يدخل إلى حساب Gmail ولا يضيف الرسائل إلى مجلد «المرسلة».","Les conversations sont conservées sur le site et une copie est envoyée par e-mail aux deux parties. Le site n'accède pas à Gmail et n'ajoute rien au dossier « Envoyés ».","Conversations are stored on the site and a copy is emailed to both parties. The site does not access Gmail or add anything to your Sent folder."],
-archivePh:["كلمة للبحث في محادثاتك (اختياري)","Mot-clé pour chercher (facultatif)","Keyword to search your chats (optional)"],
-archiveBtn:["🔍 اعرض محادثاتي","🔍 Afficher mes conversations","🔍 Show my chats"],
-archiveCount:["✅ {n} رسالة","✅ {n} message(s)","✅ {n} message(s)"],
-back:["⬅️ رجوع","⬅️ Retour","⬅️ Back"],
-policyTitle:["📜 سياسة Thika Auto .dz","📜 Politique de Thika Auto .dz","📜 Thika Auto .dz policy"],
-pol1t:["🛡️ الحماية من النصب","🛡️ Protection contre les arnaques","🛡️ Scam protection"],
-pol1b:["- كل حساب مسجل ببريد إلكتروني\n- كل رسالة مؤرشفة ويمكن الرجوع إليها\n- لا ترسل عربونا ولا دفعا مسبقا (CCP، BaridiMob...)","- Chaque compte est lié à une adresse e-mail\n- Chaque message est archivé\n- N'envoyez jamais d'acompte (CCP, BaridiMob...)","- Every account is tied to an email address\n- Every message is archived\n- Never send a deposit or advance payment (CCP, BaridiMob...)"],
-pol2t:["📧 أرشفة المحادثات","📧 Archivage des conversations","📧 Conversation archiving"],
-pol2b:["تُحفظ كل رسالة في قاعدة بيانات الموقع، ثم تُرسل نسخة بريدية للمشتري والبائع عبر خدمة البريد المرتبطة بالموقع. هذا لا يعني الدخول إلى حساب Gmail. أي طلب من جهة رسمية للوصول إلى البيانات يخضع للقوانين والإجراءات المعمول بها.","Chaque message est enregistré dans la base du site, puis une copie est envoyée par e-mail à l'acheteur et au vendeur. Cela n'implique aucun accès à Gmail. Toute demande officielle d'accès aux données suit les lois et procédures en vigueur.","Each message is stored in the site database, then a copy is emailed to buyer and seller. This does not mean access to any Gmail account. Any official data request follows applicable laws and procedures."],
-pol3t:["⚠️ نصائح الأمان","⚠️ Conseils de sécurité","⚠️ Safety tips"],
-pol3b:["🔒 لا ترسل عربونا أبدا\n📍 قابل البائع في مكان عام نهارا\n📧 احتفظ بنسخ من رسائلك","🔒 Ne versez jamais d'acompte\n📍 Rencontrez le vendeur dans un lieu public, de jour\n📧 Gardez une copie de vos messages","🔒 Never pay a deposit\n📍 Meet in a public place during the day\n📧 Keep copies of your messages"],
-navPolicy:["📜 السياسة","📜 Politique","📜 Policy"],
-navArchive:["📧 الأرشيف","📧 Archives","📧 Archive"],
-navHome:["🏠 الرئيسية","🏠 Accueil","🏠 Home"],
-footer:["Thika Auto .dz — سوق السيارات في الجزائر 🇩🇿 © 2026","Thika Auto .dz — Marché automobile algérien 🇩🇿 © 2026","Thika Auto .dz — Algerian car marketplace 🇩🇿 © 2026"],
-footerDesc:["سوق سيارات جزائري: كل محادثة بين البائع والمشتري تُحفظ في الموقع، وتصل نسخة منها بالبريد الإلكتروني للطرفين.","Marketplace automobile algérien : chaque conversation entre acheteur et vendeur est conservée sur le site, avec une copie envoyée par e-mail aux deux parties.","Algerian car marketplace: every buyer–seller conversation is stored on the site, with a copy emailed to both parties."],
-quickLinks:["روابط سريعة","Liens rapides","Quick links"],
-legal:["قانوني","Légal","Legal"],
-contactCol:["تواصل","Contact","Contact"],
-footerLocation:["📍 الجزائر","📍 Algérie","📍 Algeria"]
-};
-const LANGS=["ar","fr","en"];
-let currentLanguage=localStorage.getItem("thika_language")||"ar";
-function t(k,vars){const i=LANGS.indexOf(currentLanguage);let s=(D[k]&&D[k][i])||(D[k]&&D[k][0])||k;
-  if(vars)for(const v in vars)s=s.replace("{"+v+"}",vars[v]);return s;}
-function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));}
 
-/* ---------- الولايات ---------- */
-const WILAYAS=["أدرار","الشلف","الأغواط","أم البواقي","باتنة","بجاية","بسكرة","بشار","البليدة","البويرة","تمنراست","تبسة","تلمسان","تيارت","تيزي وزو","الجزائر","الجلفة","جيجل","سطيف","سعيدة","سكيكدة","سيدي بلعباس","عنابة","قالمة","قسنطينة","المدية","مستغانم","المسيلة","معسكر","ورقلة","وهران","البيض","إليزي","برج بوعريريج","بومرداس","الطارف","تندوف","تيسمسيلت","الوادي","خنشلة","سوق أهراس","تيبازة","ميلة","عين الدفلى","النعامة","عين تموشنت","غرداية","غليزان","تيميمون","برج باجي مختار","أولاد جلال","بني عباس","عين صالح","عين قزام","تقرت","جانت","المغير","المنيعة"]
-  .map((n,i)=>String(i+1).padStart(2,"0")+" - "+n);
+title:[
+"Thika Auto .dz — سوق السيارات",
+"Thika Auto .dz — Marché automobile",
+"Thika Auto .dz — Car Marketplace"
+],
+
+trust1:[
+"✅ حسابات مسجلة بالبريد الإلكتروني",
+"✅ Comptes inscrits par e-mail",
+"✅ Accounts registered by email"
+],
+
+trust2:[
+"✅ نسخة بريدية من كل رسالة للمشتري والبائع",
+"✅ Copie e-mail de chaque message",
+"✅ Email copy of every message"
+],
+
+trust3:[
+"✅ أرشيف للمراجعة عند الحاجة",
+"✅ Archives consultables",
+"✅ Archive available for review"
+],
+
+heroTitle:[
+"سوق السيارات في الجزائر 🇩🇿",
+"Le marché automobile en Algérie 🇩🇿",
+"The car marketplace of Algeria 🇩🇿"
+],
+
+heroText:[
+"كل محادثة بين البائع والمشتري تُحفظ في الموقع، وتصل نسخة منها بالبريد الإلكتروني للطرفين",
+"Chaque conversation acheteur-vendeur est conservée sur le site et une copie est envoyée par e-mail aux deux parties",
+"Every buyer–seller conversation is stored on the site and a copy is emailed to both parties"
+],
+
+loading:[
+"⏳ جاري التحميل...",
+"⏳ Chargement...",
+"⏳ Loading..."
+],
+
+count:[
+"✅ {n} سيارة",
+"✅ {n} voiture(s)",
+"✅ {n} car(s)"
+],
+
+allWilayas:[
+"كل الولايات (69)",
+"Toutes les wilayas (69)",
+"All wilayas (69)"
+],
+
+allCategories:[
+"كل الأقسام",
+"Toutes les catégories",
+"All categories"
+],
+
+chooseWilaya:[
+"اختر الولاية *",
+"Choisir la wilaya *",
+"Choose wilaya *"
+],
+
+search:[
+"🔍 ابحث عن سيارة...",
+"🔍 Rechercher une voiture...",
+"🔍 Search for a car..."
+],
+
+filter:[
+"🔍 فلترة",
+"🔍 Filtrer",
+"🔍 Filter"
+],
+
+ownerHelp:[
+"🔐 بعد تسجيل الدخول يظهر زر «حذف إعلاني» على إعلاناتك فقط.",
+"🔐 Après connexion, le bouton « Supprimer mon annonce » apparaît uniquement sur vos annonces.",
+"🔐 After login, the “Delete my ad” button appears only on your own ads."
+],
+
+noCars:[
+"لا توجد سيارات مطابقة",
+"Aucune annonce correspondante",
+"No matching cars"
+],
+
+login:[
+"🔐 تسجيل الدخول",
+"🔐 Connexion",
+"🔐 Log in"
+],
+
+signup:[
+"✨ إنشاء حساب",
+"✨ Créer un compte",
+"✨ Sign up"
+],
+
+logout:[
+"خروج",
+"Déconnexion",
+"Log out"
+],
+
+addBtn:[
+"+ أضف سيارة",
+"+ Ajouter",
+"+ Add car"
+],
+
+archiveShort:[
+"📧 الأرشيف",
+"📧 Archives",
+"📧 Archive"
+],
+
+contact:[
+"📧 اتصل بنا",
+"📧 Nous contacter",
+"📧 Contact us"
+],
+
+loginTitle:[
+"تسجيل الدخول",
+"Connexion",
+"Log in"
+],
+
+forgotPass:[
+"نسيت كلمة السر؟",
+"Mot de passe oublié ?",
+"Forgot password?"
+],
+
+forgotTitle:[
+"استرجاع كلمة السر",
+"Récupérer le mot de passe",
+"Recover password"
+],
+
+forgotNote:[
+"نبعثولك رابط عبر بريدك الإلكتروني تقدر بيه تختار كلمة سر جديدة.",
+"Nous vous envoyons un lien par e-mail pour choisir un nouveau mot de passe.",
+"We'll email you a link to choose a new password."
+],
+
+forgotBtn:[
+"إرسال رابط الاسترجاع 📧",
+"Envoyer le lien 📧",
+"Send reset link 📧"
+],
+
+resetLinkSent:[
+"✅ تحقق من بريدك الإلكتروني للرابط.",
+"✅ Vérifiez votre e-mail pour le lien.",
+"✅ Check your email for the link."
+],
+
+resetTitle:[
+"تعيين كلمة سر جديدة",
+"Nouveau mot de passe",
+"Set a new password"
+],
+
+resetNote:[
+"اكتب كلمة السر الجديدة لحسابك.",
+"Choisissez un nouveau mot de passe pour votre compte.",
+"Choose a new password for your account."
+],
+
+newPasswordPh:[
+"كلمة السر الجديدة (6 أحرف على الأقل)",
+"Nouveau mot de passe (6 caractères min.)",
+"New password (min. 6 characters)"
+],
+
+resetBtn:[
+"حفظ كلمة السر ✅",
+"Enregistrer ✅",
+"Save password ✅"
+],
+
+passUpdated:[
+"✅ تم تحديث كلمة السر بنجاح.",
+"✅ Mot de passe mis à jour.",
+"✅ Password updated successfully."
+],
+
+signupTitle:[
+"إنشاء حساب",
+"Créer un compte",
+"Create an account"
+],
+
+loginNote:[
+"محادثاتك تُحفظ في قاعدة بيانات الموقع، وتُرسل نسخة منها بالبريد الإلكتروني",
+"Vos conversations sont conservées sur le site et une copie est envoyée par e-mail",
+"Your chats are stored on the site and a copy is sent by email"
+],
+
+email:[
+"البريد الإلكتروني",
+"E-mail",
+"Email"
+],
+
+password:[
+"كلمة السر",
+"Mot de passe",
+"Password"
+],
+
+fullName:[
+"الاسم الكامل",
+"Nom complet",
+"Full name"
+],
+
+username:[
+"اسم المستخدم (يظهر للعامة)",
+"Nom d'utilisateur (visible publiquement)",
+"Username (shown publicly)"
+],
+
+showPass:[
+"إظهار كلمة السر",
+"Afficher le mot de passe",
+"Show password"
+],
+
+usernameNote:[
+"🔒 بريدك ورقم هاتفك لا يظهران للعامة، فقط اسم المستخدم.",
+"🔒 Votre e-mail et téléphone restent privés, seul le nom d'utilisateur est visible.",
+"🔒 Your email and phone stay private; only the username is shown."
+],
+
+loginBtn:[
+"دخول ✅",
+"Se connecter ✅",
+"Log in ✅"
+],
+
+signupBtn:[
+"إنشاء حساب ✅",
+"Créer le compte ✅",
+"Create account ✅"
+],
+
+noAccount:[
+"ما عندكش حساب؟",
+"Pas de compte ?",
+"No account?"
+],
+
+haveAccount:[
+"عندك حساب؟",
+"Déjà un compte ?",
+"Have an account?"
+],
+
+badEmail:[
+"⚠️ البريد الإلكتروني غير صحيح",
+"⚠️ E-mail invalide",
+"⚠️ Invalid email"
+],
+
+shortPass:[
+"⚠️ كلمة السر 6 أحرف على الأقل",
+"⚠️ Mot de passe : 6 caractères minimum",
+"⚠️ Password must be at least 6 characters"
+],
+
+badLogin:[
+"⚠️ البريد أو كلمة السر غير صحيحة",
+"⚠️ E-mail ou mot de passe incorrect",
+"⚠️ Wrong email or password"
+],
+
+fillData:[
+"⚠️ املأ كل البيانات",
+"⚠️ Remplissez tous les champs",
+"⚠️ Fill in all fields"
+],
+
+checkMail:[
+"✅ تحقق من بريدك الإلكتروني لتأكيد الحساب",
+"✅ Vérifiez votre e-mail pour confirmer le compte",
+"✅ Check your email to confirm your account"
+],
+
+addCarTitle:[
+"إضافة سيارة",
+"Ajouter une voiture",
+"Add a car"
+],
+
+brand:[
+"العلامة *",
+"Marque *",
+"Make *"
+],
+
+model:[
+"الموديل *",
+"Modèle *",
+"Model *"
+],
+
+year:[
+"السنة",
+"Année",
+"Year"
+],
+
+priceDzd:[
+"السعر دج *",
+"Prix DA *",
+"Price DZD *"
+],
+
+phone:[
+"رقم الهاتف *",
+"Téléphone *",
+"Phone number *"
+],
+
+photos:[
+"📸 صور السيارة (حتى 10 صور) *",
+"📸 Photos du véhicule (10 max) *",
+"📸 Car photos (up to 10) *"
+],
+
+description:[
+"وصف السيارة",
+"Description",
+"Description"
+],
+
+cancel:[
+"إلغاء",
+"Annuler",
+"Cancel"
+],
+
+publish:[
+"نشر الإعلان ✅",
+"Publier ✅",
+"Publish ✅"
+],
+
+uploading:[
+"جاري الرفع...",
+"Envoi en cours...",
+"Uploading..."
+],
+
+addImage:[
+"أضف صورة واحدة على الأقل",
+"Ajoutez au moins une photo",
+"Add at least one image"
+],
+
+uploadFail:[
+"فشل رفع الصور",
+"Échec de l'envoi des photos",
+"Image upload failed"
+],
+
+required:[
+"العلامة والموديل والسعر والولاية والهاتف مطلوبة",
+"Marque, modèle, prix, wilaya et téléphone requis",
+"Make, model, price, wilaya and phone are required"
+],
+
+published:[
+"تم نشر الإعلان",
+"Annonce publiée",
+"Ad published"
+],
+
+delete:[
+"🗑️ حذف إعلاني",
+"🗑️ Supprimer mon annonce",
+"🗑️ Delete my ad"
+],
+
+ownerNote:[
+"هذا الإعلان ملكك ويمكنك حذفه في أي وقت.",
+"Cette annonce est à vous, vous pouvez la supprimer à tout moment.",
+"This ad is yours; you can delete it at any time."
+],
+
+loginRequired:[
+"يجب تسجيل الدخول أولاً",
+"Vous devez d'abord vous connecter",
+"You must log in first"
+],
+
+confirmDelete:[
+"هل أنت متأكد من حذف هذا الإعلان؟ لا يمكن التراجع.",
+"Supprimer cette annonce ? Action irréversible.",
+"Delete this ad? This cannot be undone."
+],
+
+deleted:[
+"تم حذف إعلانك",
+"Annonce supprimée",
+"Your ad was deleted"
+],
+
+deleteFailed:[
+"تعذر حذف الإعلان",
+"Impossible de supprimer l'annonce",
+"Could not delete the ad"
+],
+
+chat:[
+"💬 محادثة",
+"💬 Discuter",
+"💬 Chat"
+],
+
+chatBadge:[
+"📧 نسخة بريدية للطرفين",
+"📧 Copie e-mail aux deux parties",
+"📧 Email copy to both parties"
+],
+
+chatNote:[
+"كل رسالة تُحفظ في الموقع وتُرسل نسخة منها بالبريد الإلكتروني للبائع والمشتري",
+"Chaque message est conservé sur le site et copié par e-mail au vendeur et à l'acheteur",
+"Every message is stored on the site and copied by email to seller and buyer"
+],
+
+quickAvailable:[
+"💬 هل المنتج لا يزال موجود؟",
+"💬 Le produit est-il toujours disponible ?",
+"💬 Is this still available?"
+],
+
+quickAvailableMsg:[
+"السلام عليكم، هل السيارة لا تزال متوفرة؟",
+"Bonjour, la voiture est-elle toujours disponible ?",
+"Hello, is the car still available?"
+],
+
+msgPh:[
+"اكتب رسالة...",
+"Écrivez un message...",
+"Write a message..."
+],
+
+send:[
+"إرسال 📧",
+"Envoyer 📧",
+"Send 📧"
+],
+
+noMsgs:[
+"💬 لا توجد رسائل بعد. ابدأ المحادثة.",
+"💬 Aucun message. Démarrez la discussion.",
+"💬 No messages yet. Start the conversation."
+],
+
+me:[
+"أنا",
+"Moi",
+"Me"
+],
+
+other:[
+"الطرف الآخر",
+"L'autre partie",
+"Other party"
+],
+
+loadFail:[
+"تعذر تحميل المحادثة",
+"Impossible de charger la discussion",
+"Could not load the chat"
+],
+
+sendFail:[
+"تعذر إرسال الرسالة",
+"Impossible d'envoyer le message",
+"Could not send the message"
+],
+
+waitBuyer:[
+"لا توجد محادثة مع مشترٍ بعد. يجب أن يرسل المشتري أول رسالة.",
+"Aucun acheteur n'a encore écrit.",
+"No buyer has written yet."
+],
+
+noSeller:[
+"تعذر تحديد حساب صاحب الإعلان",
+"Vendeur introuvable pour cette annonce",
+"Could not identify the ad owner"
+],
+
+mailOk:[
+"✅ تم حفظ الرسالة وإرسال نسخة بالبريد للطرفين.",
+"✅ Message enregistré et copie envoyée par e-mail aux deux parties.",
+"✅ Message saved and a copy was emailed to both parties."
+],
+
+mailFail:[
+"⚠️ تم حفظ الرسالة، لكن تعذر إرسال نسخة البريد.",
+"⚠️ Message enregistré, mais la copie e-mail a échoué.",
+"⚠️ Message saved, but the email copy failed."
+],
+
+archiveTitle:[
+"📧 أرشيف المحادثات",
+"📧 Archives des conversations",
+"📧 Conversation archive"
+],
+
+archiveInfo:[
+"المحادثات محفوظة في قاعدة بيانات الموقع، ويُرسل بريد إلكتروني بنسخة منها للطرفين. الموقع لا يدخل إلى حساب Gmail ولا يضيف الرسائل إلى مجلد «المرسلة».",
+"Les conversations sont conservées sur le site et une copie est envoyée par e-mail aux deux parties. Le site n'accède pas à Gmail et n'ajoute rien au dossier « Envoyés ».",
+"Conversations are stored on the site and a copy is emailed to both parties. The site does not access Gmail or add anything to your Sent folder."
+],
+
+archivePh:[
+"كلمة للبحث في محادثاتك (اختياري)",
+"Mot-clé pour chercher (facultatif)",
+"Keyword to search your chats (optional)"
+],
+
+archiveBtn:[
+"🔍 اعرض محادثاتي",
+"🔍 Afficher mes conversations",
+"🔍 Show my chats"
+],
+
+archiveCount:[
+"✅ {n} رسالة",
+"✅ {n} message(s)",
+"✅ {n} message(s)"
+],
+
+back:[
+"⬅️ رجوع",
+"⬅️ Retour",
+"⬅️ Back"
+],
+
+policyTitle:[
+"📜 سياسة Thika Auto .dz",
+"📜 Politique de Thika Auto .dz",
+"📜 Thika Auto .dz policy"
+],
+
+pol1t:[
+"🛡️ الحماية من النصب",
+"🛡️ Protection contre les arnaques",
+"🛡️ Scam protection"
+],
+
+pol1b:[
+"- كل حساب مسجل ببريد إلكتروني\n- كل رسالة مؤرشفة ويمكن الرجوع إليها\n- لا ترسل عربونا ولا دفعا مسبقا (CCP، BaridiMob...)",
+"- Chaque compte est lié à une adresse e-mail\n- Chaque message est archivé\n- N'envoyez jamais d'acompte (CCP, BaridiMob...)",
+"- Every account is tied to an email address\n- Every message is archived\n- Never send a deposit or advance payment (CCP, BaridiMob...)"
+],
+
+pol2t:[
+"📧 أرشفة المحادثات",
+"📧 Archivage des conversations",
+"📧 Conversation archiving"
+],
+
+pol2b:[
+"تُحفظ كل رسالة في قاعدة بيانات الموقع، ثم تُرسل نسخة بريدية للمشتري والبائع عبر خدمة البريد المرتبطة بالموقع. هذا لا يعني الدخول إلى حساب Gmail. أي طلب من جهة رسمية للوصول إلى البيانات يخضع للقوانين والإجراءات المعمول بها.",
+"Chaque message est enregistré dans la base du site, puis une copie est envoyée par e-mail à l'acheteur et au vendeur. Cela n'implique aucun accès à Gmail. Toute demande officielle d'accès aux données suit les lois et procédures en vigueur.",
+"Each message is stored in the site database, then a copy is emailed to buyer and seller. This does not mean access to any Gmail account. Any official data request follows applicable laws and procedures."
+],
+
+pol3t:[
+"⚠️ نصائح الأمان",
+"⚠️ Conseils de sécurité",
+"⚠️ Safety tips"
+],
+
+pol3b:[
+"🔒 لا ترسل عربونا أبدا\n📍 قابل البائع في مكان عام نهارا\n📧 احتفظ بنسخ من رسائلك",
+"🔒 Ne versez jamais d'acompte\n📍 Rencontrez le vendeur dans un lieu public, de jour\n📧 Gardez une copie de vos messages",
+"🔒 Never pay a deposit\n📍 Meet in a public place during the day\n📧 Keep copies of your messages"
+],
+
+navPolicy:[
+"📜 السياسة",
+"📜 Politique",
+"📜 Policy"
+],
+
+navArchive:[
+"📧 الأرشيف",
+"📧 Archives",
+"📧 Archive"
+],
+
+navHome:[
+"🏠 الرئيسية",
+"🏠 Accueil",
+"🏠 Home"
+],
+
+footer:[
+"Thika Auto .dz — سوق السيارات في الجزائر 🇩🇿 © 2026",
+"Thika Auto .dz — Marché automobile algérien 🇩🇿 © 2026",
+"Thika Auto .dz — Algerian car marketplace 🇩🇿 © 2026"
+],
+
+footerDesc:[
+"سوق سيارات جزائري: كل محادثة بين البائع والمشتري تُحفظ في الموقع، وتصل نسخة منها بالبريد الإلكتروني للطرفين.",
+"Marketplace automobile algérien : chaque conversation entre acheteur et vendeur est conservée sur le site, avec une copie envoyée par e-mail aux deux parties.",
+"Algerian car marketplace: every buyer–seller conversation is stored on the site, with a copy emailed to both parties."
+],
+
+quickLinks:[
+"روابط سريعة",
+"Liens rapides",
+"Quick links"
+],
+
+legal:[
+"قانوني",
+"Légal",
+"Legal"
+],
+
+contactCol:[
+"تواصل",
+"Contact",
+"Contact"
+],
+
+footerLocation:[
+"📍 الجزائر",
+"📍 Algérie",
+"📍 Algeria"
+],
+
+/* لوحة التحكم */
+
+dashboard:[
+"📊 لوحة التحكم",
+"📊 Tableau de bord",
+"📊 Dashboard"
+],
+
+dashboardTitle:[
+"لوحة التحكم",
+"Tableau de bord",
+"Dashboard"
+],
+
+dashboardWelcome:[
+"من هنا يمكنك إدارة إعلاناتك ومحادثاتك وحسابك.",
+"Ici vous pouvez gérer vos annonces, conversations et compte.",
+"Manage your ads, conversations and account here."
+],
+
+dashOverview:[
+"📊 نظرة عامة",
+"📊 Vue d'ensemble",
+"📊 Overview"
+],
+
+dashAds:[
+"🚗 إعلاناتي",
+"🚗 Mes annonces",
+"🚗 My ads"
+],
+
+dashMessages:[
+"💬 رسائلي",
+"💬 Mes messages",
+"💬 My messages"
+],
+
+dashPremium:[
+"⭐ الإعلان المميز",
+"⭐ Annonces premium",
+"⭐ Premium ads"
+],
+
+dashProfile:[
+"👤 حسابي",
+"👤 Mon compte",
+"👤 My profile"
+],
+
+statAds:[
+"إعلاناتي",
+"Mes annonces",
+"My ads"
+],
+
+statMessages:[
+"الرسائل",
+"Messages",
+"Messages"
+],
+
+statFeatured:[
+"إعلانات مميزة",
+"Annonces premium",
+"Featured ads"
+],
+
+statAccount:[
+"حالة الحساب",
+"État du compte",
+"Account status"
+],
+
+premiumTitle:[
+"اجعل إعلانك يظهر بشكل أفضل ⭐",
+"Donnez plus de visibilité à votre annonce ⭐",
+"Give your ad more visibility ⭐"
+],
+
+premiumText:[
+"الإعلان العادي مجاني. يمكنك اختيار خطة مدفوعة لجعل الإعلان مميزًا ويظهر في مقدمة النتائج بعد تأكيد الدفع.",
+"L'annonce normale est gratuite. Vous pouvez choisir une formule payante pour mettre votre annonce en avant après confirmation du paiement.",
+"Normal ads are free. You can choose a paid plan to feature your ad after payment confirmation."
+],
+
+seePlans:[
+"عرض الخطط",
+"Voir les formules",
+"View plans"
+],
+
+recentAds:[
+"أحدث إعلاناتي",
+"Mes annonces récentes",
+"My recent ads"
+],
+
+myAdsTitle:[
+"إدارة إعلاناتي",
+"Gérer mes annonces",
+"Manage my ads"
+],
+
+myMessagesTitle:[
+"آخر الرسائل",
+"Derniers messages",
+"Latest messages"
+],
+
+premiumPlans:[
+"خطط الإعلان المميز",
+"Formules premium",
+"Premium plans"
+],
+
+premiumExplain:[
+"الأسعار يمكن تحديدها من لوحة الإدارة. الدفع سيتم عبر Chargily، وتفعيل الميزة يجب أن يتم بعد التحقق من الدفع على الخادم.",
+"Les prix peuvent être définis depuis l'administration. Le paiement se fera via Chargily et l'activation doit être effectuée après vérification côté serveur.",
+"Prices can be configured from the admin panel. Payment will use Chargily and activation must happen after server-side verification."
+],
+
+individualPlan:[
+"الفردي",
+"Individuel",
+"Individual"
+],
+
+silverPlan:[
+"Silver",
+"Silver",
+"Silver"
+],
+
+goldPlan:[
+"Gold",
+"Gold",
+"Gold"
+],
+
+priceContact:[
+"يحدد لاحقًا",
+"À définir",
+"To be set"
+],
+
+individualFeature1:[
+"إعلان واحد",
+"Une annonce",
+"One ad"
+],
+
+individualFeature2:[
+"لمدة 3 أشهر",
+"Pendant 3 mois",
+"3 months"
+],
+
+individualFeature3:[
+"يظهر في المقدمة",
+"Mis en avant",
+"Featured placement"
+],
+
+silverFeature1:[
+"عدة إعلانات",
+"Plusieurs annonces",
+"Multiple ads"
+],
+
+silverFeature2:[
+"أقل من 10 إعلانات",
+"Moins de 10 annonces",
+"Fewer than 10 ads"
+],
+
+silverFeature3:[
+"خطة واحدة للإعلانات",
+"Une formule pour les annonces",
+"One plan for the ads"
+],
+
+goldFeature1:[
+"مخصص للوكالات",
+"Pour les agences",
+"For agencies"
+],
+
+goldFeature2:[
+"اشتراك سنوي",
+"Abonnement annuel",
+"Annual subscription"
+],
+
+goldFeature3:[
+"إدارة احترافية للإعلانات",
+"Gestion professionnelle",
+"Professional ad management"
+],
+
+choosePlan:[
+"اختيار الخطة",
+"Choisir",
+"Choose plan"
+],
+
+paymentSecurity:[
+"بعد اختيار الخطة سيتم توجيهك إلى خطوات الدفع. لا يتم تفعيل الإعلان المميز اعتمادًا على بيانات المتصفح فقط.",
+"Après le choix de la formule, vous serez dirigé vers le paiement. L'annonce premium n'est pas activée uniquement avec les données du navigateur.",
+"After choosing a plan, you will proceed to payment. Premium status is not activated using browser data alone."
+],
+
+featuredAdsTitle:[
+"إعلاناتي المميزة",
+"Mes annonces premium",
+"My featured ads"
+],
+
+profileTitle:[
+"معلومات الحساب",
+"Informations du compte",
+"Account information"
+],
+
+noDashboardAds:[
+"لا توجد إعلانات بعد.",
+"Aucune annonce pour le moment.",
+"No ads yet."
+],
+
+noDashboardMessages:[
+"لا توجد رسائل بعد.",
+"Aucun message pour le moment.",
+"No messages yet."
+],
+
+noFeatured:[
+"ليس لديك إعلانات مميزة حاليًا.",
+"Vous n'avez pas encore d'annonce premium.",
+"You have no featured ads yet."
+],
+
+viewAd:[
+"عرض",
+"Voir",
+"View"
+],
+
+deleteAd:[
+"حذف",
+"Supprimer",
+"Delete"
+],
+
+featureAd:[
+"تمييز الإعلان",
+"Mettre en avant",
+"Feature ad"
+],
+
+premiumPending:[
+"سيتم ربط هذه العملية ببوابة Chargily. لا يتم التفعيل إلا بعد تأكيد الدفع.",
+"Cette opération sera reliée à Chargily. L'activation se fait uniquement après confirmation du paiement.",
+"This will be connected to Chargily. Activation happens only after payment confirmation."
+]
+
+};
+
+const LANGS=["ar","fr","en"];
+
+let currentLanguage=
+localStorage.getItem("thika_language")||"ar";
+
+function t(k,vars){
+
+  const i=LANGS.indexOf(currentLanguage);
+
+  let s=
+    (D[k]&&D[k][i])||
+    (D[k]&&D[k][0])||
+    k;
+
+  if(vars){
+
+    for(const v in vars){
+
+      s=s.replace(
+        "{"+v+"}",
+        vars[v]
+      );
+
+    }
+
+  }
+
+  return s;
+}
+
+function escapeHtml(v){
+
+  return String(v??"").replace(
+    /[&<>"']/g,
+    c=>({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+    }[c])
+  );
+
+}
+
+
+/* =========================================================
+   الولايات
+========================================================= */
+
+const WILAYAS=[
+
+"أدرار",
+"الشلف",
+"الأغواط",
+"أم البواقي",
+"باتنة",
+"بجاية",
+"بسكرة",
+"بشار",
+"البليدة",
+"البويرة",
+"تمنراست",
+"تبسة",
+"تلمسان",
+"تيارت",
+"تيزي وزو",
+"الجزائر",
+"الجلفة",
+"جيجل",
+"سطيف",
+"سعيدة",
+"سكيكدة",
+"سيدي بلعباس",
+"عنابة",
+"قالمة",
+"قسنطينة",
+"المدية",
+"مستغانم",
+"المسيلة",
+"معسكر",
+"ورقلة",
+"وهران",
+"البيض",
+"إليزي",
+"برج بوعريريج",
+"بومرداس",
+"الطارف",
+"تندوف",
+"تيسمسيلت",
+"الوادي",
+"خنشلة",
+"سوق أهراس",
+"تيبازة",
+"ميلة",
+"عين الدفلى",
+"النعامة",
+"عين تموشنت",
+"غرداية",
+"غليزان",
+"تيميمون",
+"برج باجي مختار",
+"أولاد جلال",
+"بني عباس",
+"عين صالح",
+"عين قزام",
+"تقرت",
+"جانت",
+"المغير",
+"المنيعة",
+"آفلو",
+"بريكة",
+"القنطرة",
+"بير العاتر",
+"العريشة",
+"قصر الشلالة",
+"عين وسارة",
+"مسعد",
+"قصر البخاري",
+"بوسعادة",
+"الأبيض سيدي الشيخ"
+
+].map(
+  (n,i)=>
+    String(i+1).padStart(2,"0")+" - "+n
+);
+
+const CATEGORIES=[
+
+{
+  v:"cars",
+  l:[
+    "🚗 سيارات",
+    "🚗 Voitures",
+    "🚗 Cars"
+  ]
+},
+
+{
+  v:"trucks",
+  l:[
+    "🚚 شاحنات",
+    "🚚 Camions",
+    "🚚 Trucks"
+  ]
+},
+
+{
+  v:"motorcycles",
+  l:[
+    "🏍️ دراجات نارية",
+    "🏍️ Motos",
+    "🏍️ Motorcycles"
+  ]
+},
+
+{
+  v:"parts",
+  l:[
+    "🔧 قطع غيار",
+    "🔧 Pièces détachées",
+    "🔧 Spare parts"
+  ]
+}
+
+];
+
+function catLabel(v){
+
+  const c=CATEGORIES.find(c=>c.v===v);
+
+  const i=LANGS.indexOf(currentLanguage);
+
+  return c?(c.l[i]||c.l[0]):v;
+
+}
+
+function fillCategories(){
+
+  const opts=CATEGORIES
+    .map(c=>
+      `<option value="${c.v}">
+        ${catLabel(c.v)}
+      </option>`
+    )
+    .join("");
+
+  document.getElementById("filterCategory").innerHTML=
+    `<option value="">
+      ${escapeHtml(t("allCategories"))}
+    </option>`+
+    opts;
+
+  document.getElementById("category").innerHTML=opts;
+
+}
+
 function fillWilayas(){
-  const opts=WILAYAS.map(w=>`<option value="${w}">${w}</option>`).join("");
-  document.getElementById("filterWilaya").innerHTML=`<option value="" data-i18n="allWilayas"></option>`+opts;
-  document.getElementById("wilaya").innerHTML=`<option value="" data-i18n="chooseWilaya"></option>`+opts;
+
+  const opts=WILAYAS
+    .map(w=>
+      `<option value="${escapeHtml(w)}">
+        ${escapeHtml(w)}
+      </option>`
+    )
+    .join("");
+
+  document.getElementById("filterWilaya").innerHTML=
+    `<option value="">
+      ${escapeHtml(t("allWilayas"))}
+    </option>`+
+    opts;
+
+  document.getElementById("wilaya").innerHTML=
+    `<option value="">
+      ${escapeHtml(t("chooseWilaya"))}
+    </option>`+
+    opts;
+
 }
 
 function setLanguage(lang){
+
   if(!LANGS.includes(lang))return;
-  currentLanguage=lang;localStorage.setItem("thika_language",lang);
-  document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr";
+
+  currentLanguage=lang;
+
+  localStorage.setItem(
+    "thika_language",
+    lang
+  );
+
+  document.documentElement.lang=lang;
+
+  document.documentElement.dir=
+    lang==="ar"?"rtl":"ltr";
+
   document.title=t("title");
-  document.querySelectorAll("[data-i18n]").forEach(e=>e.textContent=t(e.dataset.i18n));
-  document.querySelectorAll("[data-i18n-ph]").forEach(e=>e.placeholder=t(e.dataset.i18nPh));
-  document.querySelectorAll("[data-i18n-title]").forEach(e=>e.title=t(e.dataset.i18nTitle));
-  document.querySelectorAll(".lang-switcher button").forEach(b=>b.classList.toggle("active",b.dataset.lang===lang));
-  updateHeader();renderCars();
-}
 
-/* ---------- الحساب ---------- */
-let currentUser=null,currentChatCarId=null,currentCarData=null,currentChatBuyerId=null,carsCache=null;
-async function initAuth(){const{data:{session}}=await supabaseClient.auth.getSession();currentUser=session?.user||null;updateHeader();}
-function updateHeader(){
-  const el=document.getElementById("headerActions");
-  const mail=`<span onclick="contactUs()" style="background:#EA4335;color:#fff;padding:6px 10px;border-radius:20px;cursor:pointer;font-size:11px;font-weight:800" title="${escapeHtml(t("contact"))}">📧</span>`;
-  el.innerHTML=currentUser
-    ?mail+`<span class="user-chip">✅ ${escapeHtml(currentUser.user_metadata?.username||currentUser.email.slice(0,15))}</span><button class="btn btn-outline" onclick="showPage('archive')" style="font-size:11px">${t("archiveShort")}</button><button class="btn" onclick="openAdd()" style="font-size:12px">${t("addBtn")}</button><button class="btn btn-outline" onclick="logout()" style="font-size:11px">${t("logout")}</button>`
-    :mail+`<button class="btn btn-outline" onclick="openModal('loginModal')">${t("login")}</button><button class="btn" onclick="openModal('signupModal')">${t("signup")}</button>`;
-}
-function openModal(id){document.getElementById(id).classList.add("active");}
-function closeModal(id){document.getElementById(id).classList.remove("active");}
-function openAdd(){if(!currentUser){openModal("loginModal");return;}openModal("addModal");}
-function showPage(p){
-  ["home","archive","policy"].forEach(n=>document.getElementById(n+"Page").style.display=n===p?"block":"none");
-  window.scrollTo(0,0);
-}
-function showErr(id,msg,ok){const e=document.getElementById(id);e.innerText=msg;e.style.color=ok?"#166534":"#ef4444";e.style.display="block";}
-async function doLogin(){
-  const email=document.getElementById("loginEmail").value.trim().toLowerCase();
-  const pass=document.getElementById("loginPassword").value;
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return showErr("loginError",t("badEmail"));
-  if(pass.length<6)return showErr("loginError",t("shortPass"));
-  const{data,error}=await supabaseClient.auth.signInWithPassword({email,password:pass});
-  if(error)return showErr("loginError",error.message.includes("Invalid login")?t("badLogin"):error.message);
-  currentUser=data.user;closeModal("loginModal");updateHeader();loadCars();
-}
-function openForgotPassword(){
-  closeModal("loginModal");
-  document.getElementById("forgotEmail").value=document.getElementById("loginEmail").value||"";
-  openModal("forgotModal");
-}
-async function sendPasswordReset(){
-  const email=document.getElementById("forgotEmail").value.trim().toLowerCase();
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return showErr("forgotError",t("badEmail"));
-  // الرابط اللي يوصل بالبريد يرجّع المستخدم لنفس الصفحة، ونستقبله بحدث PASSWORD_RECOVERY تحت
-  const{error}=await supabaseClient.auth.resetPasswordForEmail(email,{redirectTo:window.location.href});
-  if(error)return showErr("forgotError",error.message);
-  showErr("forgotError",t("resetLinkSent"),true);
-}
-async function updatePassword(){
-  const pass=document.getElementById("newPassword").value;
-  if(pass.length<6)return showErr("resetError",t("shortPass"));
-  const{error}=await supabaseClient.auth.updateUser({password:pass});
-  if(error)return showErr("resetError",error.message);
-  closeModal("resetModal");
-  alert(t("passUpdated"));
-}
-async function doSignup(){
-  const username=document.getElementById("signupUsername").value.trim();
-  const name=document.getElementById("signupName").value.trim();
-  const phone=document.getElementById("signupPhone").value.trim();
-  const email=document.getElementById("signupEmail").value.trim().toLowerCase();
-  const pass=document.getElementById("signupPassword").value;
-  if(!username||!name||!phone||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||pass.length<6)return showErr("signupError",t("fillData"));
-  const{data,error}=await supabaseClient.auth.signUp({email,password:pass,options:{data:{full_name:name,username,phone}}});
-  if(error)return showErr("signupError",error.message);
-  currentUser=data.session?.user||null;
-  if(currentUser){closeModal("signupModal");updateHeader();loadCars();}else showErr("signupError",t("checkMail"),true);
-}
-async function logout(){await supabaseClient.auth.signOut();currentUser=null;updateHeader();loadCars();}
+  document
+    .querySelectorAll("[data-i18n]")
+    .forEach(e=>{
+      e.textContent=t(e.dataset.i18n);
+    });
 
-/* ---------- الإعلانات ---------- */
-async function loadCars(){
-  const{data,error}=await supabaseClient.from("cars").select("*").order("created_at",{ascending:false});
-  if(error){document.getElementById("status").innerText="❌ "+error.message;return;}
-  carsCache=data;renderCars();
-}
-function renderCars(){
-  if(!carsCache)return;
-  const wilaya=document.getElementById("filterWilaya").value;
-  const q=document.getElementById("filterSearch").value.trim().toLowerCase();
-  const list=carsCache.filter(c=>(!wilaya||c.wilaya===wilaya)&&(!q||[c.brand,c.model,c.description].join(" ").toLowerCase().includes(q)));
-  document.getElementById("status").innerText=t("count",{n:list.length});
-  document.getElementById("carsGrid").innerHTML=list.length?list.map(c=>{
-    const img=c.image_url||c.images?.[0]||"https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=500";
-    const own=currentUser&&c.user_id===currentUser.id;
-    return `<div class="card"><img src="${escapeHtml(img)}" alt="${escapeHtml(c.brand+" "+c.model)}"><div class="card-body">
-<div style="font-weight:900">${escapeHtml(c.brand)} ${escapeHtml(c.model)}</div>
-<div class="price">${Number(c.price).toLocaleString()} دج</div>
-<div class="meta">📍 ${escapeHtml(c.wilaya||"")}${c.year?" | "+escapeHtml(c.year):""}${c.mileage?" | "+Number(c.mileage).toLocaleString()+" km":""}</div>
-<button class="btn" onclick="openChat(${Number(c.id)})" style="width:100%;margin-top:8px">${t("chat")}</button>
-${own?`<button class="btn btn-delete" onclick="deleteCar(${Number(c.id)})" style="width:100%;margin-top:8px">${t("delete")}</button><div class="meta" style="text-align:center">${t("ownerNote")}</div>`:""}
-</div></div>`;}).join(""):`<p style="grid-column:1/-1;text-align:center;padding:40px">${t("noCars")}</p>`;
-}
-async function deleteCar(id){
-  if(!currentUser){alert(t("loginRequired"));return;}
-  if(!confirm(t("confirmDelete")))return;
-  // الحماية الحقيقية: RLS policy على DELETE  (auth.uid() = user_id)
-  const{error}=await supabaseClient.from("cars").delete().eq("id",id).eq("user_id",currentUser.id);
-  if(error){alert(t("deleteFailed")+": "+error.message);return;}
-  alert(t("deleted"));loadCars();
-}
-async function addCar(){
-  if(!currentUser){openModal("loginModal");return;}
-  const btn=document.getElementById("publishBtn");
-  const files=Array.from(document.getElementById("carImages").files).slice(0,10);
-  const v=id=>document.getElementById(id).value.trim();
-  const price=parseInt(v("price"));
-  if(!v("brand")||!v("model")||!price||!v("wilaya")||!v("phone")){alert(t("required"));return;}
-  if(!files.length){alert(t("addImage"));return;}
-  btn.disabled=true;btn.innerText=t("uploading");
-  const urls=[];
-  for(const f of files){
-    const name=Date.now()+"-"+Math.random().toString(36).slice(2)+"."+f.name.split(".").pop();
-    const{error}=await supabaseClient.storage.from("car-images").upload(name,f);
-    if(!error)urls.push(supabaseClient.storage.from("car-images").getPublicUrl(name).data.publicUrl);
+  document
+    .querySelectorAll("[data-i18n-ph]")
+    .forEach(e=>{
+      e.placeholder=t(e.dataset.i18nPh);
+    });
+
+  document
+    .querySelectorAll("[data-i18n-title]")
+    .forEach(e=>{
+      e.title=t(e.dataset.i18nTitle);
+    });
+
+  document
+    .querySelectorAll(".lang-switcher button")
+    .forEach(b=>{
+      b.classList.toggle(
+        "active",
+        b.dataset.lang===lang
+      );
+    });
+
+  fillCategories();
+  fillWilayas();
+
+  updateHeader();
+
+  renderCars();
+
+  if(currentUser){
+    loadDashboard();
   }
-  if(!urls.length){alert(t("uploadFail"));btn.disabled=false;btn.innerText=t("publish");return;}
-  const{error}=await supabaseClient.from("cars").insert({
-    brand:v("brand"),model:v("model"),year:parseInt(v("year"))||null,mileage:parseInt(v("mileage"))||null,price,
-    wilaya:v("wilaya"),fuel:v("fuel"),gearbox:v("gearbox"),phone:v("phone"),description:v("desc"),
-    image_url:urls[0],images:urls,user_id:currentUser.id,seller_email:currentUser.email
+
+}
+
+
+/* =========================================================
+   الحساب
+========================================================= */
+
+let currentUser=null;
+let currentChatCarId=null;
+let currentCarData=null;
+let currentChatBuyerId=null;
+let carsCache=null;
+
+async function initAuth(){
+
+  const{
+    data:{session}
+  }=
+  await supabaseClient.auth.getSession();
+
+  currentUser=
+    session?.user||null;
+
+  updateHeader();
+
+}
+
+function updateHeader(){
+
+  const el=
+    document.getElementById("headerActions");
+
+  const mail=`
+    <span
+      onclick="contactUs()"
+      style="
+        background:#EA4335;
+        color:#fff;
+        padding:6px 10px;
+        border-radius:20px;
+        cursor:pointer;
+        font-size:11px;
+        font-weight:800
+      "
+      title="${escapeHtml(t("contact"))}">
+      📧
+    </span>
+  `;
+
+  if(currentUser){
+
+    const username=
+      currentUser.user_metadata?.username||
+      currentUser.user_metadata?.full_name||
+      currentUser.email?.split("@")[0]||
+      "User";
+
+    el.innerHTML=
+
+      mail+
+
+      `<span class="user-chip">
+        ✅ ${escapeHtml(username)}
+      </span>`
+
+      +
+
+      `<button
+        class="btn btn-outline"
+        onclick="showPage('dashboard')"
+        style="font-size:11px">
+        ${t("dashboard")}
+      </button>`
+
+      +
+
+      `<button
+        class="btn btn-outline"
+        onclick="showPage('archive')"
+        style="font-size:11px">
+        ${t("archiveShort")}
+      </button>`
+
+      +
+
+      `<button
+        class="btn"
+        onclick="openAdd()"
+        style="font-size:12px">
+        ${t("addBtn")}
+      </button>`
+
+      +
+
+      `<button
+        class="btn btn-outline"
+        onclick="logout()"
+        style="font-size:11px">
+        ${t("logout")}
+      </button>`;
+
+  }else{
+
+    el.innerHTML=
+
+      mail+
+
+      `<button
+        class="btn btn-outline"
+        onclick="openModal('loginModal')">
+        ${t("login")}
+      </button>`
+
+      +
+
+      `<button
+        class="btn"
+        onclick="openModal('signupModal')">
+        ${t("signup")}
+      </button>`;
+
+  }
+
+}
+
+function openModal(id){
+
+  document
+    .getElementById(id)
+    .classList
+    .add("active");
+
+}
+
+function closeModal(id){
+
+  document
+    .getElementById(id)
+    .classList
+    .remove("active");
+
+}
+
+function openAdd(){
+
+  if(!currentUser){
+
+    openModal("loginModal");
+
+    return;
+  }
+
+  openModal("addModal");
+
+}
+
+function showPage(p){
+
+  const pages=[
+    "home",
+    "archive",
+    "policy",
+    "dashboard"
+  ];
+
+  pages.forEach(n=>{
+
+    const el=
+      document.getElementById(
+        n+"Page"
+      );
+
+    if(el){
+
+      el.style.display=
+        n===p
+        ?"block"
+        :"none";
+
+    }
+
   });
-  btn.disabled=false;btn.innerText=t("publish");
-  if(error){alert(error.message);return;}
-  closeModal("addModal");loadCars();alert(t("published"));
+
+  window.scrollTo(0,0);
+
+  if(p==="dashboard" && currentUser){
+
+    loadDashboard();
+
+  }
+
 }
 
-/* ---------- المحادثة ---------- */
+function showErr(id,msg,ok){
+
+  const e=
+    document.getElementById(id);
+
+  e.innerText=msg;
+
+  e.style.color=
+    ok?"#166534":"#ef4444";
+
+  e.style.display="block";
+
+}
+
+async function doLogin(){
+
+  const email=
+    document
+      .getElementById("loginEmail")
+      .value
+      .trim()
+      .toLowerCase();
+
+  const pass=
+    document
+      .getElementById("loginPassword")
+      .value;
+
+  if(
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  ){
+
+    return showErr(
+      "loginError",
+      t("badEmail")
+    );
+
+  }
+
+  if(pass.length<6){
+
+    return showErr(
+      "loginError",
+      t("shortPass")
+    );
+
+  }
+
+  const{
+    data,
+    error
+  }=
+  await supabaseClient.auth.signInWithPassword({
+    email,
+    password:pass
+  });
+
+  if(error){
+
+    return showErr(
+      "loginError",
+      error.message.includes("Invalid login")
+      ?t("badLogin")
+      :error.message
+    );
+
+  }
+
+  currentUser=data.user;
+
+  closeModal("loginModal");
+
+  updateHeader();
+
+  await loadCars();
+
+}
+
+function openForgotPassword(){
+
+  closeModal("loginModal");
+
+  document.getElementById(
+    "forgotEmail"
+  ).value=
+    document.getElementById(
+      "loginEmail"
+    ).value||"";
+
+  openModal("forgotModal");
+
+}
+
+async function sendPasswordReset(){
+
+  const email=
+    document
+      .getElementById("forgotEmail")
+      .value
+      .trim()
+      .toLowerCase();
+
+  if(
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  ){
+
+    return showErr(
+      "forgotError",
+      t("badEmail")
+    );
+
+  }
+
+  const{
+    error
+  }=
+  await supabaseClient.auth.resetPasswordForEmail(
+    email,
+    {
+      redirectTo:window.location.href
+    }
+  );
+
+  if(error){
+
+    return showErr(
+      "forgotError",
+      error.message
+    );
+
+  }
+
+  showErr(
+    "forgotError",
+    t("resetLinkSent"),
+    true
+  );
+
+}
+
+async function updatePassword(){
+
+  const pass=
+    document
+      .getElementById("newPassword")
+      .value;
+
+  if(pass.length<6){
+
+    return showErr(
+      "resetError",
+      t("shortPass")
+    );
+
+  }
+
+  const{
+    error
+  }=
+  await supabaseClient.auth.updateUser({
+    password:pass
+  });
+
+  if(error){
+
+    return showErr(
+      "resetError",
+      error.message
+    );
+
+  }
+
+  closeModal("resetModal");
+
+  alert(t("passUpdated"));
+
+}
+
+async function doSignup(){
+
+  const username=
+    document
+      .getElementById("signupUsername")
+      .value
+      .trim();
+
+  const name=
+    document
+      .getElementById("signupName")
+      .value
+      .trim();
+
+  const phone=
+    document
+      .getElementById("signupPhone")
+      .value
+      .trim();
+
+  const email=
+    document
+      .getElementById("signupEmail")
+      .value
+      .trim()
+      .toLowerCase();
+
+  const pass=
+    document
+      .getElementById("signupPassword")
+      .value;
+
+  if(
+    !username||
+    !name||
+    !phone||
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||
+    pass.length<6
+  ){
+
+    return showErr(
+      "signupError",
+      t("fillData")
+    );
+
+  }
+
+  const{
+    data,
+    error
+  }=
+  await supabaseClient.auth.signUp({
+
+    email,
+
+    password:pass,
+
+    options:{
+      data:{
+        full_name:name,
+        username,
+        phone
+      }
+    }
+
+  });
+
+  if(error){
+
+    return showErr(
+      "signupError",
+      error.message
+    );
+
+  }
+
+  currentUser=
+    data.session?.user||null;
+
+  if(currentUser){
+
+    closeModal("signupModal");
+
+    updateHeader();
+
+    loadCars();
+
+  }else{
+
+    showErr(
+      "signupError",
+      t("checkMail"),
+      true
+    );
+
+  }
+
+}
+
+async function logout(){
+
+  await supabaseClient.auth.signOut();
+
+  currentUser=null;
+
+  updateHeader();
+
+  showPage("home");
+
+  loadCars();
+
+}
+
+
+/* =========================================================
+   الإعلانات
+========================================================= */
+
+async function loadCars(){
+
+  const{
+    data,
+    error
+  }=
+  await supabaseClient
+    .from("cars")
+    .select("*")
+    .order(
+      "created_at",
+      {ascending:false}
+    );
+
+  if(error){
+
+    document.getElementById(
+      "status"
+    ).innerText=
+      "❌ "+error.message;
+
+    return;
+  }
+
+  carsCache=data;
+
+  renderCars();
+
+  if(currentUser){
+
+    loadDashboard();
+
+  }
+
+}
+
+function renderCars(){
+
+  if(!carsCache)return;
+
+  const cat=
+    document.getElementById(
+      "filterCategory"
+    ).value;
+
+  const wilaya=
+    document.getElementById(
+      "filterWilaya"
+    ).value;
+
+  const q=
+    document.getElementById(
+      "filterSearch"
+    ).value
+    .trim()
+    .toLowerCase();
+
+  let list=
+    carsCache.filter(c=>
+
+      (!cat||c.category===cat)&&
+
+      (!wilaya||c.wilaya===wilaya)&&
+
+      (
+        !q||
+        [
+          c.brand,
+          c.model,
+          c.description
+        ]
+        .join(" ")
+        .toLowerCase()
+        .includes(q)
+      )
+
+    );
+
+  /* الإعلانات المميزة في المقدمة */
+  list.sort((a,b)=>{
+
+    const af=
+      a.is_featured===true;
+
+    const bf=
+      b.is_featured===true;
+
+    if(af&&!bf)return -1;
+
+    if(!af&&bf)return 1;
+
+    return 0;
+
+  });
+
+  document.getElementById(
+    "status"
+  ).innerText=
+    t("count",{n:list.length});
+
+  document.getElementById(
+    "carsGrid"
+  ).innerHTML=
+
+    list.length
+
+    ?
+
+    list.map(c=>{
+
+      const img=
+        c.image_url||
+        c.images?.[0]||
+        "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=500";
+
+      const own=
+        currentUser&&
+        c.user_id===currentUser.id;
+
+      const featured=
+        c.is_featured===true;
+
+      const safeId=
+        escapeHtml(c.id);
+
+      return `
+
+<div class="card ${featured?"featured":""}">
+
+${featured?
+  `<div class="featured-badge">
+    ⭐ مميز
+  </div>`
+  :""
+}
+
+<img
+src="${escapeHtml(img)}"
+alt="${escapeHtml(
+  (c.brand||"")+" "+(c.model||"")
+)}">
+
+<div class="card-body">
+
+<div style="font-weight:900">
+${escapeHtml(c.brand||"")}
+${escapeHtml(c.model||"")}
+</div>
+
+<div class="meta">
+${catLabel(c.category||"cars")}
+</div>
+
+<div class="price">
+${Number(c.price||0).toLocaleString()}
+دج
+</div>
+
+<div class="meta">
+📍 ${escapeHtml(c.wilaya||"")}
+${c.year?
+  " | "+escapeHtml(c.year)
+  :""
+}
+${c.mileage?
+  " | "+Number(c.mileage).toLocaleString()+" km"
+  :""
+}
+</div>
+
+<button
+class="btn"
+onclick="openChat('${safeId}')"
+style="width:100%;margin-top:8px">
+${t("chat")}
+</button>
+
+${
+own?
+
+`<button
+  class="btn btn-delete"
+  onclick="deleteCar('${safeId}')"
+  style="width:100%;margin-top:8px">
+  ${t("delete")}
+</button>
+
+<div
+class="meta"
+style="text-align:center">
+${t("ownerNote")}
+</div>`
+
+:""
+
+}
+
+</div>
+</div>`;
+
+    }).join("")
+
+    :
+
+    `<p
+      style="
+        grid-column:1/-1;
+        text-align:center;
+        padding:40px
+      ">
+      ${t("noCars")}
+    </p>`;
+
+}
+
+async function deleteCar(id){
+
+  if(!currentUser){
+
+    alert(t("loginRequired"));
+
+    return;
+  }
+
+  if(!confirm(t("confirmDelete")))
+    return;
+
+  const{
+    error
+  }=
+  await supabaseClient
+    .from("cars")
+    .delete()
+    .eq("id",id)
+    .eq("user_id",currentUser.id);
+
+  if(error){
+
+    alert(
+      t("deleteFailed")+
+      ": "+
+      error.message
+    );
+
+    return;
+  }
+
+  alert(t("deleted"));
+
+  loadCars();
+
+}
+
+async function addCar(){
+
+  if(!currentUser){
+
+    openModal("loginModal");
+
+    return;
+  }
+
+  const btn=
+    document.getElementById(
+      "publishBtn"
+    );
+
+  const files=
+    Array.from(
+      document.getElementById(
+        "carImages"
+      ).files
+    ).slice(0,10);
+
+  const v=id=>
+    document
+      .getElementById(id)
+      .value
+      .trim();
+
+  const price=
+    parseInt(v("price"));
+
+  if(
+    !v("brand")||
+    !v("model")||
+    !price||
+    !v("wilaya")||
+    !v("phone")
+  ){
+
+    alert(t("required"));
+
+    return;
+  }
+
+  if(!files.length){
+
+    alert(t("addImage"));
+
+    return;
+  }
+
+  btn.disabled=true;
+
+  btn.innerText=
+    t("uploading");
+
+  const urls=[];
+
+  for(const f of files){
+
+    const ext=
+      f.name
+        .split(".")
+        .pop()
+        .toLowerCase();
+
+    const name=
+      Date.now()+
+      "-"+
+      Math.random()
+        .toString(36)
+        .slice(2)+
+      "."+
+      ext;
+
+    const{
+      error
+    }=
+    await supabaseClient
+      .storage
+      .from("car-images")
+      .upload(
+        name,
+        f
+      );
+
+    if(!error){
+
+      urls.push(
+        supabaseClient
+          .storage
+          .from("car-images")
+          .getPublicUrl(name)
+          .data
+          .publicUrl
+      );
+
+    }
+
+  }
+
+  if(!urls.length){
+
+    alert(t("uploadFail"));
+
+    btn.disabled=false;
+
+    btn.innerText=
+      t("publish");
+
+    return;
+  }
+
+  const{
+    error
+  }=
+  await supabaseClient
+    .from("cars")
+    .insert({
+
+      category:
+        document
+          .getElementById("category")
+          .value||
+        "cars",
+
+      brand:v("brand"),
+
+      model:v("model"),
+
+      year:
+        parseInt(v("year"))||
+        null,
+
+      mileage:
+        parseInt(v("mileage"))||
+        null,
+
+      price,
+
+      wilaya:v("wilaya"),
+
+      fuel:
+        v("fuel"),
+
+      gearbox:
+        v("gearbox"),
+
+      phone:
+        v("phone"),
+
+      description:
+        v("desc"),
+
+      image_url:
+        urls[0],
+
+      images:
+        urls,
+
+      user_id:
+        currentUser.id,
+
+      seller_email:
+        currentUser.email
+
+      /*
+        ملاحظة:
+        لا نضع is_featured هنا.
+        الإعلان العادي مجاني.
+        الإعلان المميز يتم تفعيله
+        بعد تأكيد الدفع من الخادم.
+      */
+
+    });
+
+  btn.disabled=false;
+
+  btn.innerText=
+    t("publish");
+
+  if(error){
+
+    alert(error.message);
+
+    return;
+  }
+
+  closeModal("addModal");
+
+  document.getElementById(
+    "carImages"
+  ).value="";
+
+  loadCars();
+
+  alert(t("published"));
+
+}
+
+
+/* =========================================================
+   المحادثة
+========================================================= */
+
 async function openChat(carId){
-  if(!currentUser){openModal("loginModal");return;}
-  const{data:car,error}=await supabaseClient.from("cars").select("*").eq("id",carId).single();
-  if(error||!car){alert(t("loadFail"));return;}
-  currentChatCarId=car.id;currentCarData=car;currentChatBuyerId=null;
-  document.getElementById("chatCarTitle").innerText=`${car.brand} ${car.model}`;
+
+  if(!currentUser){
+
+    openModal("loginModal");
+
+    return;
+  }
+
+  const{
+    data:car,
+    error
+  }=
+  await supabaseClient
+    .from("cars")
+    .select("*")
+    .eq("id",carId)
+    .single();
+
+  if(error||!car){
+
+    alert(t("loadFail"));
+
+    return;
+  }
+
+  currentChatCarId=car.id;
+
+  currentCarData=car;
+
+  currentChatBuyerId=null;
+
+  document.getElementById(
+    "chatCarTitle"
+  ).innerText=
+    `${car.brand} ${car.model}`;
+
   openModal("chatModal");
+
   await loadMessages(car.id);
+
 }
+
 async function loadMessages(carId){
-  const{data,error}=await supabaseClient.from("messages").select("*").eq("car_id",carId).order("created_at",{ascending:true});
-  const box=document.getElementById("chatMessages");
-  if(error){box.innerHTML=`<div class="chat-error">❌ ${t("loadFail")}: ${escapeHtml(error.message)}</div>`;return;}
-  if(!data.length){currentChatBuyerId=null;box.innerHTML=`<div class="msg system">${t("noMsgs")}</div>`;return;}
-  currentChatBuyerId=(data.find(m=>m.buyer_id)||{}).buyer_id||null;
-  const loc=currentLanguage==="ar"?"ar-DZ":currentLanguage==="fr"?"fr-DZ":"en-DZ";
-  box.innerHTML=data.map(m=>{
-    const mine=m.sender_id===currentUser.id;
-    return `<div class="msg ${mine?"me":"other"}"><strong>${mine?t("me"):escapeHtml(m.sender_name||t("other"))}:</strong> ${escapeHtml(m.message)}<br><small>🕒 ${escapeHtml(new Date(m.created_at).toLocaleString(loc))}</small></div>`;
-  }).join("");
-  box.scrollTop=box.scrollHeight;
+
+  const{
+    data,
+    error
+  }=
+  await supabaseClient
+    .from("messages")
+    .select("*")
+    .eq("car_id",carId)
+    .order(
+      "created_at",
+      {ascending:true}
+    );
+
+  const box=
+    document.getElementById(
+      "chatMessages"
+    );
+
+  if(error){
+
+    box.innerHTML=
+      `<div class="chat-error">
+        ❌ ${t("loadFail")}:
+        ${escapeHtml(error.message)}
+      </div>`;
+
+    return;
+  }
+
+  if(!data.length){
+
+    currentChatBuyerId=null;
+
+    box.innerHTML=
+      `<div class="msg system">
+        ${t("noMsgs")}
+      </div>`;
+
+    return;
+  }
+
+  currentChatBuyerId=
+    (data.find(m=>m.buyer_id)||{})
+      .buyer_id||
+    null;
+
+  const loc=
+    currentLanguage==="ar"
+      ?"ar-DZ"
+      :currentLanguage==="fr"
+        ?"fr-DZ"
+        :"en-DZ";
+
+  box.innerHTML=
+    data.map(m=>{
+
+      const mine=
+        m.sender_id===currentUser.id;
+
+      return `
+
+<div class="msg ${mine?"me":"other"}">
+
+<strong>
+${mine
+  ?t("me")
+  :escapeHtml(
+      m.sender_name||
+      t("other")
+    )
+}:
+</strong>
+
+${escapeHtml(m.message)}
+
+<br>
+
+<small>
+🕒 ${
+  escapeHtml(
+    new Date(
+      m.created_at
+    ).toLocaleString(loc)
+  )
 }
-/* الأرشفة: جدول messages هو المرجع، ودالة Edge باسم resend-email ترسل نسخة بريدية للطرفين.
-   لا وصول إلى Gmail. الأفضل أن تجلب الدالة الإيميلات من قاعدة البيانات بدل أخذها من العميل. */
+</small>
+
+</div>`;
+
+    }).join("");
+
+  box.scrollTop=
+    box.scrollHeight;
+
+}
+
 async function archiveByEmail(p){
+
   try{
-    const{error}=await supabaseClient.functions.invoke("resend-email",{body:{...p,subject:`Thika Auto .dz — ${p.carInfo}`}});
-    if(error)throw error;return true;
-  }catch(e){console.error("archive email error:",e);return false;}
+
+    const{
+      error
+    }=
+    await supabaseClient
+      .functions
+      .invoke(
+        "resend-email",
+        {
+          body:{
+            ...p,
+            subject:
+              `Thika Auto .dz — ${p.carInfo}`
+          }
+        }
+      );
+
+    if(error)
+      throw error;
+
+    return true;
+
+  }catch(e){
+
+    console.error(
+      "archive email error:",
+      e
+    );
+
+    return false;
+  }
+
 }
+
 function sendQuickMessage(){
-  document.getElementById("chatInput").value=t("quickAvailableMsg");
+
+  document.getElementById(
+    "chatInput"
+  ).value=
+    t("quickAvailableMsg");
+
   sendMessage();
+
 }
+
 async function sendMessage(){
-  if(!currentUser){openModal("loginModal");return;}
-  const input=document.getElementById("chatInput");
-  const msg=input.value.trim();
-  if(!msg||!currentCarData)return;
-  const car=currentCarData;
-  const sellerId=car.user_id,sellerEmail=(car.seller_email||"").toLowerCase();
-  if(!sellerId||!sellerEmail){alert(t("noSeller"));return;}
-  const isSeller=sellerId===currentUser.id;
-  let buyerId,buyerEmail;
+
+  if(!currentUser){
+
+    openModal("loginModal");
+
+    return;
+  }
+
+  const input=
+    document.getElementById(
+      "chatInput"
+    );
+
+  const msg=
+    input.value.trim();
+
+  if(!msg||!currentCarData)
+    return;
+
+  const car=
+    currentCarData;
+
+  const sellerId=
+    car.user_id;
+
+  const sellerEmail=
+    (
+      car.seller_email||
+      ""
+    ).toLowerCase();
+
+  if(!sellerId||!sellerEmail){
+
+    alert(t("noSeller"));
+
+    return;
+  }
+
+  const isSeller=
+    sellerId===currentUser.id;
+
+  let buyerId;
+  let buyerEmail;
+
   if(isSeller){
-    buyerId=currentChatBuyerId;
-    if(!buyerId){alert(t("waitBuyer"));return;}
-    const{data:prev,error:pe}=await supabaseClient.from("messages").select("buyer_email").eq("car_id",car.id).eq("buyer_id",buyerId).limit(1);
-    if(pe){alert(t("sendFail")+": "+pe.message);return;}
-    buyerEmail=prev?.[0]?.buyer_email||"";
-  }else{buyerId=currentUser.id;buyerEmail=currentUser.email.toLowerCase();}
-  if(!buyerEmail){alert(t("sendFail"));return;}
-  const{data:ins,error}=await supabaseClient.from("messages").insert({
-    car_id:car.id,sender_id:currentUser.id,buyer_id:buyerId,seller_id:sellerId,
-    sender_name:currentUser.user_metadata?.username||currentUser.user_metadata?.full_name||currentUser.email,
-    buyer_email:buyerEmail,seller_email:sellerEmail,message:msg,is_seller:isSeller
-  }).select().single();
-  if(error){alert(t("sendFail")+": "+error.message);return;}
-  currentChatBuyerId=buyerId;input.value="";
-  await loadMessages(car.id);
-  const ok=await archiveByEmail({buyerEmail,sellerEmail,carInfo:`${car.brand||""} ${car.model||""}`.trim(),message:msg,wilaya:car.wilaya||"",phone:car.phone||"",senderEmail:currentUser.email,senderName:currentUser.user_metadata?.full_name||currentUser.email,sentAt:ins?.created_at||new Date().toISOString()});
-  const box=document.getElementById("chatMessages");
-  box.insertAdjacentHTML("beforeend",`<div class="${ok?"chat-ok":"chat-error"}">${t(ok?"mailOk":"mailFail")}</div>`);
-  box.scrollTop=box.scrollHeight;
+
+    buyerId=
+      currentChatBuyerId;
+
+    if(!buyerId){
+
+      alert(t("waitBuyer"));
+
+      return;
+    }
+
+    const{
+      data:prev,
+      error:pe
+    }=
+    await supabaseClient
+      .from("messages")
+      .select("buyer_email")
+      .eq("car_id",car.id)
+      .eq("buyer_id",buyerId)
+      .limit(1);
+
+    if(pe){
+
+      alert(
+        t("sendFail")+
+        ": "+
+        pe.message
+      );
+
+      return;
+    }
+
+    buyerEmail=
+      prev?.[0]?.buyer_email||
+      "";
+
+  }else{
+
+    buyerId=
+      currentUser.id;
+
+    buyerEmail=
+      currentUser.email
+        .toLowerCase();
+
+  }
+
+  if(!buyerEmail){
+
+    alert(t("sendFail"));
+
+    return;
+  }
+
+  const{
+    data:ins,
+    error
+  }=
+  await supabaseClient
+    .from("messages")
+    .insert({
+
+      car_id:
+        car.id,
+
+      sender_id:
+        currentUser.id,
+
+      buyer_id:
+        buyerId,
+
+      seller_id:
+        sellerId,
+
+      sender_name:
+        currentUser
+          .user_metadata
+          ?.username||
+        currentUser
+          .user_metadata
+          ?.full_name||
+        currentUser.email,
+
+      buyer_email:
+        buyerEmail,
+
+      seller_email:
+        sellerEmail,
+
+      message:
+        msg,
+
+      is_seller:
+        isSeller
+
+    })
+    .select()
+    .single();
+
+  if(error){
+
+    alert(
+      t("sendFail")+
+      ": "+
+      error.message
+    );
+
+    return;
+  }
+
+  currentChatBuyerId=
+    buyerId;
+
+  input.value="";
+
+  await loadMessages(
+    car.id
+  );
+
+  const ok=
+    await archiveByEmail({
+
+      buyerEmail,
+
+      sellerEmail,
+
+      carInfo:
+        `${car.brand||""} ${car.model||""}`
+          .trim(),
+
+      message:
+        msg,
+
+      wilaya:
+        car.wilaya||"",
+
+      phone:
+        car.phone||"",
+
+      senderEmail:
+        currentUser.email,
+
+      senderName:
+        currentUser
+          .user_metadata
+          ?.full_name||
+        currentUser.email,
+
+      sentAt:
+        ins?.created_at||
+        new Date().toISOString()
+
+    });
+
+  const box=
+    document.getElementById(
+      "chatMessages"
+    );
+
+  box.insertAdjacentHTML(
+    "beforeend",
+    `<div class="${
+      ok
+      ?"chat-ok"
+      :"chat-error"
+    }">
+      ${t(
+        ok
+        ?"mailOk"
+        :"mailFail"
+      )}
+    </div>`
+  );
+
+  box.scrollTop=
+    box.scrollHeight;
+
 }
 
-/* ---------- الأرشيف ---------- */
+
+/* =========================================================
+   الأرشيف
+========================================================= */
+
 async function searchArchive(){
-  if(!currentUser){openModal("loginModal");return;}
-  const q=document.getElementById("archiveSearch").value.trim().toLowerCase();
-  // RLS على جدول messages يجب أن يحصر القراءة في المشتري والبائع
-  const{data,error}=await supabaseClient.from("messages").select("*,cars(brand,model)")
-    .or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`).order("created_at",{ascending:false}).limit(100);
-  const out=document.getElementById("archiveResults");
-  if(error){out.innerHTML=`<div class="chat-error">${escapeHtml(error.message)}</div>`;return;}
-  const rows=data.filter(m=>!q||(m.message+" "+(m.cars?.brand||"")+" "+(m.cars?.model||"")).toLowerCase().includes(q));
-  const loc=currentLanguage==="ar"?"ar-DZ":currentLanguage==="fr"?"fr-DZ":"en-DZ";
-  out.innerHTML=`<p>${t("archiveCount",{n:rows.length})}</p>`+rows.map(m=>`<div class="box" style="font-size:11px;padding:10px;margin:6px 0"><b>${escapeHtml(m.cars?.brand||"")} ${escapeHtml(m.cars?.model||"")}</b> - ${escapeHtml(new Date(m.created_at).toLocaleString(loc))}<br>${escapeHtml(m.message)}<br><small>📧 ${escapeHtml(m.buyer_email)} → ${escapeHtml(m.seller_email)}</small></div>`).join("");
-}
-function contactUs(){
-  window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${CONTACT_EMAIL}&su=${encodeURIComponent("Thika Auto .dz")}`,"_blank");
+
+  if(!currentUser){
+
+    openModal("loginModal");
+
+    return;
+  }
+
+  const q=
+    document
+      .getElementById(
+        "archiveSearch"
+      )
+      .value
+      .trim()
+      .toLowerCase();
+
+  const{
+    data,
+    error
+  }=
+  await supabaseClient
+    .from("messages")
+    .select(
+      "*,cars(brand,model)"
+    )
+    .or(
+      `buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`
+    )
+    .order(
+      "created_at",
+      {ascending:false}
+    )
+    .limit(100);
+
+  const out=
+    document.getElementById(
+      "archiveResults"
+    );
+
+  if(error){
+
+    out.innerHTML=
+      `<div class="chat-error">
+        ${escapeHtml(error.message)}
+      </div>`;
+
+    return;
+  }
+
+  const rows=
+    data.filter(m=>
+
+      !q||
+
+      (
+        m.message+
+        " "+
+        (m.cars?.brand||"")+
+        " "+
+        (m.cars?.model||"")
+      )
+      .toLowerCase()
+      .includes(q)
+
+    );
+
+  const loc=
+    currentLanguage==="ar"
+      ?"ar-DZ"
+      :currentLanguage==="fr"
+        ?"fr-DZ"
+        :"en-DZ";
+
+  out.innerHTML=
+
+    `<p>
+      ${t(
+        "archiveCount",
+        {n:rows.length}
+      )}
+    </p>`
+
+    +
+
+    rows.map(m=>
+
+      `<div
+        class="box"
+        style="
+          font-size:11px;
+          padding:10px;
+          margin:6px 0
+        ">
+
+        <b>
+          ${escapeHtml(
+            m.cars?.brand||""
+          )}
+          ${escapeHtml(
+            m.cars?.model||""
+          )}
+        </b>
+
+        -
+
+        ${escapeHtml(
+          new Date(
+            m.created_at
+          ).toLocaleString(loc)
+        )}
+
+        <br>
+
+        ${escapeHtml(
+          m.message
+        )}
+
+        <br>
+
+        <small>
+          📧
+          ${escapeHtml(
+            m.buyer_email
+          )}
+          →
+          ${escapeHtml(
+            m.seller_email
+          )}
+        </small>
+
+      </div>`
+
+    ).join("");
+
 }
 
-/* ---------- التشغيل ---------- */
-document.getElementById("footerContactEmail").textContent=CONTACT_EMAIL;
+
+/* =========================================================
+   لوحة التحكم
+========================================================= */
+
+function dashboardTab(tab,button){
+
+  if(!currentUser){
+
+    openModal("loginModal");
+
+    return;
+  }
+
+  document
+    .querySelectorAll(
+      ".dashboard-section"
+    )
+    .forEach(s=>{
+      s.classList.remove("active");
+    });
+
+  document
+    .querySelectorAll(
+      ".dashboard-nav"
+    )
+    .forEach(b=>{
+      b.classList.remove("active");
+    });
+
+  const target=
+    document.getElementById(
+      "dash"+
+      tab.charAt(0).toUpperCase()+
+      tab.slice(1)
+    );
+
+  if(target)
+    target.classList.add("active");
+
+  if(button)
+    button.classList.add("active");
+
+  if(tab==="overview"){
+    loadDashboard();
+  }
+
+  if(tab==="myAds"){
+    renderDashboardAds();
+  }
+
+  if(tab==="messages"){
+    loadDashboardMessages();
+  }
+
+  if(tab==="premium"){
+    renderDashboardFeatured();
+  }
+
+  if(tab==="profile"){
+    loadDashboardProfile();
+  }
+
+}
+
+async function loadDashboard(){
+
+  if(!currentUser)
+    return;
+
+  const myAds=
+    (carsCache||[])
+      .filter(c=>
+        c.user_id===
+        currentUser.id
+      );
+
+  document.getElementById(
+    "dashAdsCount"
+  ).textContent=
+    myAds.length;
+
+  const featured=
+    myAds.filter(
+      c=>c.is_featured===true
+    );
+
+  document.getElementById(
+    "dashFeaturedCount"
+  ).textContent=
+    featured.length;
+
+  document.getElementById(
+    "dashAccountStatus"
+  ).textContent=
+    "✓";
+
+  const{
+    data:messages
+  }=
+  await supabaseClient
+    .from("messages")
+    .select("id")
+    .or(
+      `buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`
+    );
+
+  document.getElementById(
+    "dashMessagesCount"
+  ).textContent=
+    messages?.length||0;
+
+  renderDashboardRecentAds();
+
+  renderDashboardAds();
+
+  renderDashboardFeatured();
+
+  loadDashboardMessages();
+
+  loadDashboardProfile();
+
+}
+
+function dashboardAdHtml(c){
+
+  const img=
+    c.image_url||
+    c.images?.[0]||
+    "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=500";
+
+  const featured=
+    c.is_featured===true;
+
+  const id=
+    escapeHtml(c.id);
+
+  return `
+
+<div class="dashboard-ad">
+
+<img
+src="${escapeHtml(img)}"
+alt="${escapeHtml(
+  (c.brand||"")+" "+(c.model||"")
+)}">
+
+<div class="dashboard-ad-info">
+
+<strong>
+${escapeHtml(c.brand||"")}
+${escapeHtml(c.model||"")}
+</strong>
+
+<div class="meta">
+${Number(c.price||0).toLocaleString()} دج
+</div>
+
+<div class="meta">
+📍 ${escapeHtml(c.wilaya||"")}
+</div>
+
+${
+featured
+?
+`<span class="badge">
+⭐ مميز
+</span>`
+:
+``
+}
+
+</div>
+
+<div class="dashboard-ad-actions">
+
+<button
+class="btn"
+onclick="openChat('${id}')">
+${t("viewAd")}
+</button>
+
+${
+!featured
+?
+`<button
+  class="btn"
+  onclick="upgradeAd('${id}')">
+  ${t("featureAd")}
+</button>`
+:
+""
+}
+
+<button
+class="btn btn-delete"
+onclick="deleteCar('${id}')">
+${t("deleteAd")}
+</button>
+
+</div>
+
+</div>`;
+
+}
+
+function renderDashboardRecentAds(){
+
+  const box=
+    document.getElementById(
+      "dashboardRecentAds"
+    );
+
+  if(!box||!currentUser)
+    return;
+
+  const ads=
+    (carsCache||[])
+      .filter(c=>
+        c.user_id===
+        currentUser.id
+      )
+      .slice(0,5);
+
+  if(!ads.length){
+
+    box.innerHTML=
+      `<div class="empty-dashboard">
+        ${t("noDashboardAds")}
+      </div>`;
+
+    return;
+  }
+
+  box.innerHTML=
+    ads.map(
+      dashboardAdHtml
+    ).join("");
+
+}
+
+function renderDashboardAds(){
+
+  const box=
+    document.getElementById(
+      "dashboardAdsList"
+    );
+
+  if(!box||!currentUser)
+    return;
+
+  const ads=
+    (carsCache||[])
+      .filter(c=>
+        c.user_id===
+        currentUser.id
+      );
+
+  if(!ads.length){
+
+    box.innerHTML=
+      `<div class="empty-dashboard">
+        ${t("noDashboardAds")}
+      </div>`;
+
+    return;
+  }
+
+  box.innerHTML=
+    ads.map(
+      dashboardAdHtml
+    ).join("");
+
+}
+
+async function loadDashboardMessages(){
+
+  const box=
+    document.getElementById(
+      "dashboardMessagesList"
+    );
+
+  if(!box||!currentUser)
+    return;
+
+  const{
+    data,
+    error
+  }=
+  await supabaseClient
+    .from("messages")
+    .select(
+      "id,message,created_at,car_id,sender_id,sender_name,cars(brand,model)"
+    )
+    .or(
+      `buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`
+    )
+    .order(
+      "created_at",
+      {ascending:false}
+    )
+    .limit(15);
+
+  if(error){
+
+    box.innerHTML=
+      `<div class="chat-error">
+        ${escapeHtml(error.message)}
+      </div>`;
+
+    return;
+  }
+
+  if(!data?.length){
+
+    box.innerHTML=
+      `<div class="empty-dashboard">
+        ${t("noDashboardMessages")}
+      </div>`;
+
+    return;
+  }
+
+  const loc=
+    currentLanguage==="ar"
+      ?"ar-DZ"
+      :currentLanguage==="fr"
+        ?"fr-DZ"
+        :"en-DZ";
+
+  box.innerHTML=
+    data.map(m=>
+
+      `<div class="dashboard-message">
+
+        <strong>
+          💬
+          ${escapeHtml(
+            m.cars?.brand||""
+          )}
+          ${escapeHtml(
+            m.cars?.model||""
+          )}
+        </strong>
+
+        <p>
+          ${escapeHtml(
+            m.message
+          )}
+        </p>
+
+        <small>
+          ${escapeHtml(
+            m.sender_name||""
+          )}
+          —
+          ${escapeHtml(
+            new Date(
+              m.created_at
+            ).toLocaleString(loc)
+          )}
+        </small>
+
+      </div>`
+
+    ).join("");
+
+}
+
+function renderDashboardFeatured(){
+
+  const box=
+    document.getElementById(
+      "dashboardFeaturedAds"
+    );
+
+  if(!box||!currentUser)
+    return;
+
+  const ads=
+    (carsCache||[])
+      .filter(c=>
+        c.user_id===
+        currentUser.id&&
+        c.is_featured===true
+      );
+
+  if(!ads.length){
+
+    box.innerHTML=
+      `<div class="empty-dashboard">
+        ${t("noFeatured")}
+      </div>`;
+
+    return;
+  }
+
+  box.innerHTML=
+    ads.map(
+      dashboardAdHtml
+    ).join("");
+
+}
+
+function loadDashboardProfile(){
+
+  const box=
+    document.getElementById(
+      "dashboardProfile"
+    );
+
+  if(!box||!currentUser)
+    return;
+
+  const meta=
+    currentUser.user_metadata||{};
+
+  box.innerHTML=
+
+    `<div class="profile-item">
+
+      <small>
+        ${t("username")}
+      </small>
+
+      <strong>
+        ${escapeHtml(
+          meta.username||
+          "—"
+        )}
+      </strong>
+
+    </div>`
+
+    +
+
+    `<div class="profile-item">
+
+      <small>
+        ${t("fullName")}
+      </small>
+
+      <strong>
+        ${escapeHtml(
+          meta.full_name||
+          "—"
+        )}
+      </strong>
+
+    </div>`
+
+    +
+
+    `<div class="profile-item">
+
+      <small>
+        ${t("email")}
+      </small>
+
+      <strong>
+        ${escapeHtml(
+          currentUser.email||
+          "—"
+        )}
+      </strong>
+
+    </div>`
+
+    +
+
+    `<div class="profile-item">
+
+      <small>
+        ${t("phone")}
+      </small>
+
+      <strong>
+        ${escapeHtml(
+          meta.phone||
+          "—"
+        )}
+      </strong>
+
+    </div>`;
+
+}
+
+
+/* =========================================================
+   الخطط المميزة
+========================================================= */
+
+function startPremium(plan){
+
+  if(!currentUser){
+
+    openModal("loginModal");
+
+    return;
+  }
+
+  alert(
+    t("premiumPending")+
+    "\n\n"+
+    "Plan: "+
+    plan
+  );
+
+  /*
+    هنا سنضع لاحقًا رابط إنشاء عملية الدفع
+    عبر Chargily من Edge Function.
+
+    مثال معماري:
+
+    frontend
+       ↓
+    create-payment Edge Function
+       ↓
+    Chargily
+       ↓
+    payment_url
+       ↓
+    user pays
+       ↓
+    Chargily webhook
+       ↓
+    verify payment
+       ↓
+    UPDATE cars
+       SET is_featured=true,
+           featured_until=...
+  */
+
+}
+
+function upgradeAd(id){
+
+  if(!currentUser){
+
+    openModal("loginModal");
+
+    return;
+  }
+
+  const car=
+    (carsCache||[])
+      .find(c=>
+        String(c.id)===String(id)
+      );
+
+  if(!car)
+    return;
+
+  /*
+    مهم:
+    لا نقوم هنا بعمل:
+    is_featured=true
+
+    لأن ذلك يسمح لأي شخص بتفعيل
+    الإعلان المميز من المتصفح.
+
+    العملية الصحيحة:
+    1. اختيار الخطة.
+    2. إنشاء Payment عبر الخادم.
+    3. الدفع في Chargily.
+    4. Webhook من Chargily.
+    5. التحقق من العملية.
+    6. الخادم يقوم بتفعيل الإعلان.
+  */
+
+  dashboardTab(
+    "premium",
+    document.querySelector(
+      '.dashboard-nav[onclick*="premium"]'
+    )
+  );
+
+}
+
+
+/* =========================================================
+   التواصل
+========================================================= */
+
+function contactUs(){
+
+  window.open(
+    `https://mail.google.com/mail/?view=cm&fs=1&to=${CONTACT_EMAIL}&su=${encodeURIComponent("Thika Auto .dz")}`,
+    "_blank"
+  );
+
+}
+
+
+/* =========================================================
+   التشغيل
+========================================================= */
+
+document.getElementById(
+  "filterSearch"
+).value="";
+
+document.getElementById(
+  "footerContactEmail"
+).textContent=
+  CONTACT_EMAIL;
+
+fillCategories();
+
 fillWilayas();
-setLanguage(currentLanguage);
-initAuth().then(loadCars);
-supabaseClient.auth.onAuthStateChange((_e,s)=>{
-  const id=s?.user?.id||null;
-  if(id!==(currentUser?.id||null)){currentUser=s?.user||null;updateHeader();loadCars();}
-  if(_e==="PASSWORD_RECOVERY"){openModal("resetModal");}
-});
+
+setLanguage(
+  currentLanguage
+);
+
+initAuth().then(
+  loadCars
+);
+
+supabaseClient
+  .auth
+  .onAuthStateChange(
+    (_e,s)=>{
+
+      const id=
+        s?.user?.id||
+        null;
+
+      if(
+        id!==
+        (currentUser?.id||null)
+      ){
+
+        currentUser=
+          s?.user||null;
+
+        updateHeader();
+
+        loadCars();
+
+      }
+
+      if(
+        _e===
+        "PASSWORD_RECOVERY"
+      ){
+
+        openModal(
+          "resetModal"
+        );
+
+      }
+
+    }
+  );
+
 </script>
+
 </body>
 </html>
