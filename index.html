@@ -162,7 +162,7 @@ footer a{color:#facc15;text-decoration:none;font-weight:800;margin:0 8px;cursor:
 <div class="row"><input class="input" id="mileage" type="number" placeholder="km"><select class="input" id="wilaya"></select></div>
 <div class="row"><select class="input" id="fuel"><option>بنزين</option><option>ديزل</option><option>غاز</option><option>هجين</option></select><select class="input" id="gearbox"><option>يدوي</option><option>أوتوماتيك</option></select></div>
 <input class="input" id="phone" data-i18n-ph="phone">
-<div style="background:#0489BF;padding:12px;border-radius:12px;border:2px dashed #0489BF;margin:10px 0">
+<div style="background:#f0fdf4;padding:12px;border-radius:12px;border:2px dashed #22c55e;margin:10px 0">
 <label style="font-weight:900;display:block" data-i18n="photos"></label>
 <input type="file" id="carImages" multiple accept="image/*" class="input" style="background:#fff;margin-top:8px">
 </div>
@@ -332,7 +332,7 @@ function t(k,vars){const i=LANGS.indexOf(currentLanguage);let s=(D[k]&&D[k][i])|
 function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));}
 
 /* ---------- الولايات ---------- */
-const WILAYAS=[ ,"أدرار","الشلف","الأغواط","أم البواقي","باتنة","بجاية","بسكرة","بشار","البليدة","البويرة","تمنراست","تبسة","تلمسان","تيارت","تيزي وزو","الجزائر","الجلفة","جيجل","سطيف","سعيدة","سكيكدة","سيدي بلعباس","عنابة","قالمة","قسنطينة","المدية","مستغانم","المسيلة","معسكر","ورقلة","وهران","البيض","إليزي","برج بوعريريج","بومرداس","الطارف","تندوف","تيسمسيلت","الوادي","خنشلة","سوق أهراس","تيبازة","ميلة","عين الدفلى","النعامة","عين تموشنت","غرداية","غليزان","تيميمون","برج باجي مختار","أولاد جلال","بني عباس","عين صالح","عين قزام","تقرت","جانت","المغير","المنيعة","أفلو,"بريكة" ,"القنطرة","بئر العاتر","قصر الشلالة","اعين وسارة","مسعد","اقصر البخاري ",","بوسعادة""]
+const WILAYAS=["أدرار","الشلف","الأغواط","أم البواقي","باتنة","بجاية","بسكرة","بشار","البليدة","البويرة","تمنراست","تبسة","تلمسان","تيارت","تيزي وزو","الجزائر","الجلفة","جيجل","سطيف","سعيدة","سكيكدة","سيدي بلعباس","عنابة","قالمة","قسنطينة","المدية","مستغانم","المسيلة","معسكر","ورقلة","وهران","البيض","إليزي","برج بوعريريج","بومرداس","الطارف","تندوف","تيسمسيلت","الوادي","خنشلة","سوق أهراس","تيبازة","ميلة","عين الدفلى","النعامة","عين تموشنت","غرداية","غليزان","تيميمون","برج باجي مختار","أولاد جلال","بني عباس","عين صالح","عين قزام","تقرت","جانت","المغير","المنيعة"]
   .map((n,i)=>String(i+1).padStart(2,"0")+" - "+n);
 function fillWilayas(){
   const opts=WILAYAS.map(w=>`<option value="${w}">${w}</option>`).join("");
