@@ -4284,8 +4284,99 @@ async function sendMessage(){
 /* =========================================================
    الأرشيف
 ========================================================= */
+let archiveRows=[];
 
 async function searchArchive(){
+  if(!currentUser){openModal("loginModal");return;}
+  const q=document.getElementById("archiveSearch").value.trim().toLowerCase();
+  const{data,error}=await supabaseClient
+    .from("messages")
+    .select("*,cars(brand,model)")
+    .or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`)
+    .order("created_at",{ascending:false})
+    .limit(100);
+  const out=document.getElementById("archiveResults");
+  if(error){
+    out.innerHTML=`<div class="chat-error">${escapeHtml(error.message)}</div>`;
+    return;
+  }
+  const rows=data.filter(m=>!q||
+    (m.message+" "+(m.cars?.brand||"")+" "+(m.cars?.model||""))
+    .toLowerCase().includes(q));
+  archiveRows=rows;
+  const loc=currentLanguage==="ar"?"ar-DZ":currentLanguage==="fr"?"fr-DZ":"en-DZ";
+  const seen=new Set();
+  out.innerHTML=`<p>${t("archiveCount",{n:rows.length})}</p>`+
+  rows.map((m,i)=>{
+    const key=m.car_id+"|"+m.buyer_id;
+    const canReply=m.seller_id===currentUser.id&&!seen.has(key);
+    seen.add(key);
+    const replyBox=canReply?`
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <input class="input" id="reply_${i}"
+          placeholder="${escapeHtml(t("msgPh"))}"
+          style="flex:1;margin:0"
+          onkeypress="if(event.key==='Enter')replyFromArchive(${i})">
+        <button class="btn" id="replyBtn_${i}"
+          onclick="replyFromArchive(${i})"
+          style="margin:0">${t("send")}</button>
+      </div>`:"";
+    return `<div class="box" style="font-size:11px;padding:10px;margin:6px 0">
+      <b>${escapeHtml(m.cars?.brand||"")} ${escapeHtml(m.cars?.model||"")}</b>
+      - ${escapeHtml(new Date(m.created_at).toLocaleString(loc))}
+      <br>${escapeHtml(m.message)}<br>
+      <small>📧 ${escapeHtml(m.buyer_email)} → ${escapeHtml(m.seller_email)}</small>
+      ${replyBox}
+    </div>`;
+  }).join("");
+}
+
+async function replyFromArchive(i){
+  const m=archiveRows[i];
+  const input=document.getElementById("reply_"+i);
+  const btn=document.getElementById("replyBtn_"+i);
+  if(!m||!input||!currentUser)return;
+  const msg=input.value.trim();
+  if(!msg)return;
+  btn.disabled=true;
+  const myName=currentUser.user_metadata?.username||
+    currentUser.user_metadata?.full_name||currentUser.email;
+  const{data:ins,error}=await supabaseClient
+    .from("messages")
+    .insert({
+      car_id:m.car_id,
+      sender_id:currentUser.id,
+      buyer_id:m.buyer_id,
+      seller_id:currentUser.id,
+      sender_name:myName,
+      buyer_email:m.buyer_email,
+      seller_email:currentUser.email.toLowerCase(),
+      message:msg,
+      is_seller:true
+    })
+    .select().single();
+  btn.disabled=false;
+  if(error){
+    alert(t("sendFail")+": "+error.message);
+    return;
+  }
+  input.value="";
+  const ok=await archiveByEmail({
+    buyerEmail:m.buyer_email,
+    sellerEmail:currentUser.email.toLowerCase(),
+    carInfo:`${m.cars?.brand||""} ${m.cars?.model||""}`.trim(),
+    message:msg,
+    wilaya:"",
+    phone:"",
+    senderEmail:currentUser.email,
+    senderName:myName,
+    sentAt:ins?.created_at||new Date().toISOString()
+  });
+  if(!ok)alert(t("mailFail"));
+  searchArchive();
+}
+async function searchArchiveOld(){
+  
 
   if(!currentUser){
 
