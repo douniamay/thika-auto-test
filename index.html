@@ -3865,7 +3865,8 @@ async function addCar(){
    المحادثة
 ========================================================= */
 
-async function openChat(carId){
+async function openChat(carId,buyerId){
+  forcedBuyerId=buyerId||null;
 
   if(!currentUser){
 
