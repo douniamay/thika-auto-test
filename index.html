@@ -3951,11 +3951,10 @@ async function loadMessages(carId){
     return;
   }
 
-  currentChatBuyerId=
-    (data.find(m=>m.buyer_id)||{})
-      .buyer_id||
-    null;
-
+ const lastFromBuyer=[...data].reverse()
+  .find(m=>m.buyer_id && m.sender_id!==currentUser.id);
+currentChatBuyerId=
+  (lastFromBuyer||data.find(m=>m.buyer_id)||{}).buyer_id||null;
   const loc=
     currentLanguage==="ar"
       ?"ar-DZ"
