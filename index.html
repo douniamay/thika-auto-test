@@ -713,6 +713,139 @@ footer a{
   color:#94a3b8
 }
 
+
+
+/* ================= ADMIN DASHBOARD ================= */
+.admin-page{
+  max-width:1180px;
+  margin:24px auto;
+  padding:0 16px 40px
+}
+.admin-head{
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  color:#fff;
+  border-radius:20px;
+  padding:24px;
+  margin-bottom:16px
+}
+.admin-head h2{font-size:22px;margin-bottom:6px}
+.admin-head p{font-size:12px;color:#cbd5e1}
+.admin-layout{
+  display:grid;
+  grid-template-columns:220px 1fr;
+  gap:16px
+}
+.admin-sidebar{
+  background:#fff;
+  border:1px solid #e2e8f0;
+  border-radius:16px;
+  padding:10px;
+  height:max-content;
+  position:sticky;
+  top:90px
+}
+.admin-nav{
+  width:100%;
+  border:0;
+  background:transparent;
+  padding:11px 12px;
+  border-radius:10px;
+  text-align:start;
+  cursor:pointer;
+  font-weight:800;
+  color:#475569;
+  margin-bottom:4px
+}
+.admin-nav:hover{background:#f1f5f9}
+.admin-nav.active{background:#0f172a;color:#fff}
+.admin-content{
+  min-width:0
+}
+.admin-section{display:none}
+.admin-section.active{display:block}
+.admin-stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin-bottom:14px
+}
+.admin-stat{
+  background:#fff;
+  border:1px solid #e2e8f0;
+  border-radius:15px;
+  padding:14px
+}
+.admin-stat .icon{font-size:20px;margin-bottom:5px}
+.admin-stat strong{display:block;font-size:22px}
+.admin-stat span{font-size:10px;color:#64748b}
+.admin-box{
+  background:#fff;
+  border:1px solid #e2e8f0;
+  border-radius:16px;
+  padding:15px;
+  margin-bottom:14px
+}
+.admin-box h3{font-size:15px;margin-bottom:12px}
+.admin-toolbar{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:12px
+}
+.admin-toolbar input{flex:1;min-width:180px}
+.admin-table-wrap{overflow:auto}
+.admin-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:11px
+}
+.admin-table th,
+.admin-table td{
+  border-bottom:1px solid #e2e8f0;
+  padding:9px 7px;
+  text-align:start;
+  vertical-align:middle
+}
+.admin-table th{background:#f8fafc;color:#475569;font-size:10px}
+.admin-table img{
+  width:54px;height:40px;object-fit:cover;border-radius:8px
+}
+.admin-badge{
+  display:inline-block;
+  padding:4px 7px;
+  border-radius:999px;
+  font-size:9px;
+  font-weight:800;
+  background:#f1f5f9
+}
+.admin-badge.featured{background:#fef3c7;color:#92400e}
+.admin-danger{background:#fee2e2!important;color:#991b1b!important}
+.admin-note{
+  background:#eff6ff;
+  border:1px solid #bfdbfe;
+  color:#1e40af;
+  border-radius:12px;
+  padding:11px;
+  font-size:11px;
+  margin-bottom:12px
+}
+.admin-muted{color:#64748b;font-size:11px}
+.admin-user-card{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px 0;
+  border-bottom:1px solid #e2e8f0
+}
+.admin-user-card:last-child{border-bottom:0}
+
+@media(max-width:900px){
+  .admin-layout{grid-template-columns:1fr}
+  .admin-sidebar{position:static;display:flex;overflow:auto;gap:4px}
+  .admin-nav{min-width:max-content;width:auto}
+  .admin-stats{grid-template-columns:repeat(2,1fr)}
+}
+
 @media(max-width:800px){
   .dashboard-layout{
     grid-template-columns:1fr
@@ -837,6 +970,80 @@ data-i18n="ownerHelp">
 
 <div class="grid" id="carsGrid"></div>
 
+</div>
+
+
+<!-- ================= ADMIN DASHBOARD ================= -->
+<div id="adminPage" class="admin-page view" style="display:none">
+
+  <div class="admin-head">
+    <h2>👑 <span data-i18n="adminTitle"></span></h2>
+    <p data-i18n="adminWelcome"></p>
+  </div>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <button class="admin-nav active" onclick="adminTab('overview',this)" data-i18n="adminOverview"></button>
+      <button class="admin-nav" onclick="adminTab('ads',this)" data-i18n="adminAds"></button>
+      <button class="admin-nav" onclick="adminTab('featured',this)" data-i18n="adminFeatured"></button>
+      <button class="admin-nav" onclick="adminTab('users',this)" data-i18n="adminUsers"></button>
+      <button class="admin-nav" onclick="adminTab('messages',this)" data-i18n="adminMessages"></button>
+    </aside>
+
+    <main class="admin-content">
+
+      <section id="adminOverview" class="admin-section active">
+        <div class="admin-stats">
+          <div class="admin-stat"><div class="icon">🚗</div><strong id="adminAdsCount">0</strong><span data-i18n="adminStatAds"></span></div>
+          <div class="admin-stat"><div class="icon">⭐</div><strong id="adminFeaturedCount">0</strong><span data-i18n="adminStatFeatured"></span></div>
+          <div class="admin-stat"><div class="icon">👥</div><strong id="adminUsersCount">0</strong><span data-i18n="adminStatUsers"></span></div>
+          <div class="admin-stat"><div class="icon">💬</div><strong id="adminMessagesCount">—</strong><span data-i18n="adminStatMessages"></span></div>
+        </div>
+
+        <div class="admin-box">
+          <h3 data-i18n="adminRecentAds"></h3>
+          <div id="adminRecentAds"></div>
+        </div>
+      </section>
+
+      <section id="adminAds" class="admin-section">
+        <div class="admin-box">
+          <h3 data-i18n="adminAdsTitle"></h3>
+          <div class="admin-toolbar">
+            <input class="input" id="adminAdsSearch" data-i18n-ph="adminSearch" oninput="renderAdminAds()">
+            <button class="btn" onclick="renderAdminAds()" data-i18n="adminRefresh"></button>
+          </div>
+          <div class="admin-table-wrap"><table class="admin-table"><thead><tr>
+            <th data-i18n="adminPhoto"></th><th data-i18n="adminCar"></th><th data-i18n="adminOwner"></th><th data-i18n="adminPrice"></th><th data-i18n="adminStatus"></th><th data-i18n="adminActions"></th>
+          </tr></thead><tbody id="adminAdsTable"></tbody></table></div>
+        </div>
+      </section>
+
+      <section id="adminFeatured" class="admin-section">
+        <div class="admin-box">
+          <h3 data-i18n="adminFeaturedTitle"></h3>
+          <div id="adminFeaturedList"></div>
+        </div>
+      </section>
+
+      <section id="adminUsers" class="admin-section">
+        <div class="admin-box">
+          <h3 data-i18n="adminUsersTitle"></h3>
+          <div class="admin-note" data-i18n="adminUsersNote"></div>
+          <div id="adminUsersList"></div>
+        </div>
+      </section>
+
+      <section id="adminMessages" class="admin-section">
+        <div class="admin-box">
+          <h3 data-i18n="adminMessagesTitle"></h3>
+          <div class="admin-note" data-i18n="adminMessagesNote"></div>
+          <div id="adminMessagesList"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
 </div>
 
 <!-- ================= ARCHIVE ================= -->
@@ -2638,7 +2845,46 @@ premiumPending:[
 "سيتم ربط هذه العملية ببوابة Chargily. لا يتم التفعيل إلا بعد تأكيد الدفع.",
 "Cette opération sera reliée à Chargily. L'activation se fait uniquement après confirmation du paiement.",
 "This will be connected to Chargily. Activation happens only after payment confirmation."
-]
+],
+
+adminTitle:["لوحة إدارة Thika Auto","Administration Thika Auto","Thika Auto Admin"],
+adminWelcome:["هذه اللوحة مخصصة لإدارة إعلانات ومستخدمي المنصة.","Cette interface est réservée à l'administration de la plateforme.","This panel is for managing the marketplace."],
+adminOverview:["📊 نظرة عامة","📊 Vue d'ensemble","📊 Overview"],
+adminAds:["🚗 جميع الإعلانات","🚗 Toutes les annonces","🚗 All ads"],
+adminFeatured:["⭐ الإعلانات المميزة","⭐ Annonces premium","⭐ Featured ads"],
+adminUsers:["👥 المستخدمون","👥 Utilisateurs","👥 Users"],
+adminMessages:["💬 الرسائل","💬 Messages","💬 Messages"],
+adminStatAds:["إجمالي الإعلانات","Total des annonces","Total ads"],
+adminStatFeatured:["الإعلانات المميزة","Annonces premium","Featured ads"],
+adminStatUsers:["المستخدمون الظاهرون في الإعلانات","Utilisateurs représentés par les annonces","Users represented by ads"],
+adminStatMessages:["الرسائل المتاحة وفق الصلاحيات","Messages accessibles selon les droits","Messages accessible by policy"],
+adminRecentAds:["أحدث الإعلانات","Dernières annonces","Recent ads"],
+adminAdsTitle:["إدارة جميع الإعلانات","Gestion de toutes les annonces","Manage all ads"],
+adminSearch:["ابحث بالسيارة أو الولاية أو البريد...","Rechercher par voiture, wilaya ou e-mail...","Search by car, wilaya or email..."],
+adminRefresh:["تحديث","Actualiser","Refresh"],
+adminPhoto:["الصورة","Photo","Photo"],
+adminCar:["السيارة","Voiture","Car"],
+adminOwner:["المالك","Propriétaire","Owner"],
+adminPrice:["السعر","Prix","Price"],
+adminStatus:["الحالة","Statut","Status"],
+adminActions:["إجراءات","Actions","Actions"],
+adminFeaturedTitle:["الإعلانات المميزة الحالية","Annonces premium actuelles","Current featured ads"],
+adminUsersTitle:["المستخدمون الظاهرون في الإعلانات","Utilisateurs représentés par les annonces","Users represented by ads"],
+adminUsersNote:["هذه القائمة مبنية على user_id الموجود في جدول cars. لا يتم عرض بيانات auth.users مباشرة من المتصفح.","Cette liste est basée sur user_id dans cars. Les données de auth.users ne sont pas exposées directement au navigateur.","This list is based on user_id in cars. auth.users data is not exposed directly to the browser."],
+adminMessagesTitle:["الرسائل","Messages","Messages"],
+adminMessagesNote:["عدد الرسائل هنا يعتمد على سياسات RLS في Supabase. للوصول الإداري إلى جميع الرسائل يجب إنشاء سياسة آمنة للأدمن.","Le nombre de messages dépend des politiques RLS de Supabase. Un accès administrateur complet nécessite une politique sécurisée.","Message access depends on Supabase RLS policies. Full admin access requires a secure admin policy."],
+adminNormal:["عادي","Normal","Normal"],
+adminFeaturedBadge:["⭐ مميز","⭐ Premium","⭐ Featured"],
+adminDelete:["حذف","Supprimer","Delete"],
+adminDeleteConfirm:["هل أنت متأكد من حذف هذا الإعلان؟","Voulez-vous vraiment supprimer cette annonce ?","Are you sure you want to delete this ad?"],
+adminDeleteOk:["تم حذف الإعلان.","Annonce supprimée.","Ad deleted."],
+adminDeleteFail:["تعذر حذف الإعلان. تحقق من سياسة RLS للأدمن في Supabase.","Impossible de supprimer l'annonce. Vérifiez la politique RLS admin dans Supabase.","Could not delete the ad. Check the admin RLS policy in Supabase."],
+adminNotAllowed:["هذا القسم مخصص للأدمن فقط.","Cette section est réservée aux administrateurs.","This area is for administrators only."],
+adminNoAds:["لا توجد إعلانات.","Aucune annonce.","No ads."],
+adminNoFeatured:["لا توجد إعلانات مميزة.","Aucune annonce premium.","No featured ads."],
+adminNoUsers:["لا توجد حسابات ظاهرة في الإعلانات.","Aucun utilisateur représenté dans les annonces.","No users represented by ads."],
+adminNoMessages:["لا توجد رسائل يمكن عرضها بهذه الصلاحيات.","Aucun message accessible avec ces droits.","No messages accessible with these permissions."]
+
 
 };
 
@@ -2927,6 +3173,7 @@ function setLanguage(lang){
 ========================================================= */
 
 let currentUser=null;
+let isAdmin=false;
 let currentChatCarId=null;
 let currentCarData=null;
 let currentChatBuyerId=null;
@@ -2942,6 +3189,7 @@ async function initAuth(){
   currentUser=
     session?.user||null;
 
+  await refreshAdminStatus();
   updateHeader();
 
 }
@@ -2992,6 +3240,17 @@ function updateHeader(){
         style="font-size:11px">
         ${t("dashboard")}
       </button>`
+
+      +
+
+      (isAdmin
+        ? `<button
+            class="btn"
+            onclick="openAdminDashboard()"
+            style="font-size:11px">
+            👑 ${t("adminTitle")}
+          </button>`
+        : "")
 
       +
 
@@ -3081,8 +3340,15 @@ function showPage(p){
     "home",
     "archive",
     "policy",
-    "dashboard"
+    "dashboard",
+    "admin"
   ];
+
+  if(p==="admin" && !isAdmin){
+    openModal("loginModal");
+    alert(t("adminNotAllowed"));
+    return;
+  }
 
   pages.forEach(n=>{
 
@@ -3181,6 +3447,8 @@ async function doLogin(){
   }
 
   currentUser=data.user;
+
+  await refreshAdminStatus();
 
   closeModal("loginModal");
 
@@ -3394,6 +3662,7 @@ async function logout(){
   await supabaseClient.auth.signOut();
 
   currentUser=null;
+  isAdmin=false;
 
   updateHeader();
 
@@ -4515,6 +4784,269 @@ async function searchArchiveOld(){
 }
 
 
+
+/* =========================================================
+   إدارة الأدمن
+========================================================= */
+
+async function refreshAdminStatus(){
+
+  isAdmin=false;
+
+  if(!currentUser)
+    return false;
+
+  try{
+
+    const{data,error}=await supabaseClient
+      .from("admins")
+      .select("user_id")
+      .eq("user_id",currentUser.id)
+      .maybeSingle();
+
+    if(!error && data?.user_id===currentUser.id)
+      isAdmin=true;
+
+  }catch(e){
+    console.error("admin status error:",e);
+  }
+
+  return isAdmin;
+}
+
+async function openAdminDashboard(){
+
+  if(!currentUser){
+    openModal("loginModal");
+    return;
+  }
+
+  const ok=await refreshAdminStatus();
+
+  if(!ok){
+    alert(t("adminNotAllowed"));
+    return;
+  }
+
+  showPage("admin");
+  loadAdminDashboard();
+}
+
+function adminTab(tab,button){
+
+  if(!isAdmin){
+    openAdminDashboard();
+    return;
+  }
+
+  document.querySelectorAll(".admin-section").forEach(s=>s.classList.remove("active"));
+  document.querySelectorAll(".admin-nav").forEach(b=>b.classList.remove("active"));
+
+  const target=document.getElementById("admin"+tab.charAt(0).toUpperCase()+tab.slice(1));
+  if(target) target.classList.add("active");
+  if(button) button.classList.add("active");
+
+  if(tab==="overview") loadAdminDashboard();
+  if(tab==="ads") renderAdminAds();
+  if(tab==="featured") renderAdminFeatured();
+  if(tab==="users") renderAdminUsers();
+  if(tab==="messages") loadAdminMessages();
+}
+
+function getAdminAds(){
+  return Array.isArray(carsCache)?carsCache.slice():[];
+}
+
+function adminCarTitle(c){
+  return `${c.brand||""} ${c.model||""}`.trim()||"—";
+}
+
+function adminCarMatches(c,q){
+  if(!q) return true;
+  const hay=[
+    c.brand,c.model,c.wilaya,c.seller_email,c.phone,c.description,c.user_id
+  ].filter(Boolean).join(" ").toLowerCase();
+  return hay.includes(q);
+}
+
+async function loadAdminDashboard(){
+
+  if(!isAdmin) return;
+
+  const ads=getAdminAds();
+  const featured=ads.filter(c=>c.is_featured===true);
+  const users=new Set(ads.map(c=>c.user_id).filter(Boolean));
+
+  document.getElementById("adminAdsCount").textContent=ads.length;
+  document.getElementById("adminFeaturedCount").textContent=featured.length;
+  document.getElementById("adminUsersCount").textContent=users.size;
+
+  const msgBox=document.getElementById("adminMessagesCount");
+  try{
+    const{count,error}=await supabaseClient
+      .from("messages")
+      .select("id",{count:"exact",head:true});
+    msgBox.textContent=error?"—":String(count||0);
+  }catch(e){
+    msgBox.textContent="—";
+  }
+
+  renderAdminRecentAds();
+}
+
+function renderAdminRecentAds(){
+
+  const box=document.getElementById("adminRecentAds");
+  if(!box) return;
+
+  const ads=getAdminAds().slice(0,8);
+  if(!ads.length){
+    box.innerHTML=`<div class="empty-dashboard">${t("adminNoAds")}</div>`;
+    return;
+  }
+
+  box.innerHTML=ads.map(c=>`
+    <div class="admin-user-card">
+      <div>
+        <strong>${escapeHtml(adminCarTitle(c))}</strong>
+        <div class="admin-muted">📍 ${escapeHtml(c.wilaya||"—")} · ${Number(c.price||0).toLocaleString()} دج</div>
+      </div>
+      <div>
+        ${c.is_featured===true?`<span class="admin-badge featured">${t("adminFeaturedBadge")}</span>`:`<span class="admin-badge">${t("adminNormal")}</span>`}
+      </div>
+    </div>`).join("");
+}
+
+function renderAdminAds(){
+
+  const box=document.getElementById("adminAdsTable");
+  if(!box) return;
+
+  const q=(document.getElementById("adminAdsSearch")?.value||"").trim().toLowerCase();
+  const ads=getAdminAds().filter(c=>adminCarMatches(c,q));
+
+  if(!ads.length){
+    box.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:25px">${t("adminNoAds")}</td></tr>`;
+    return;
+  }
+
+  box.innerHTML=ads.map(c=>{
+    const img=c.image_url||c.images?.[0]||"";
+    const status=c.is_featured===true
+      ? `<span class="admin-badge featured">${t("adminFeaturedBadge")}</span>`
+      : `<span class="admin-badge">${t("adminNormal")}</span>`;
+
+    return `<tr>
+      <td>${img?`<img src="${escapeHtml(img)}" alt="">`:"—"}</td>
+      <td><strong>${escapeHtml(adminCarTitle(c))}</strong><br><span class="admin-muted">${escapeHtml(c.wilaya||"—")}</span></td>
+      <td>${escapeHtml(c.seller_email||c.user_id||"—")}</td>
+      <td>${Number(c.price||0).toLocaleString()} دج</td>
+      <td>${status}</td>
+      <td><button class="btn admin-danger" style="font-size:10px;padding:6px 9px" onclick="adminDeleteCar('${escapeHtml(c.id)}')">${t("adminDelete")}</button></td>
+    </tr>`;
+  }).join("");
+}
+
+function renderAdminFeatured(){
+
+  const box=document.getElementById("adminFeaturedList");
+  if(!box) return;
+
+  const ads=getAdminAds().filter(c=>c.is_featured===true);
+  if(!ads.length){
+    box.innerHTML=`<div class="empty-dashboard">${t("adminNoFeatured")}</div>`;
+    return;
+  }
+
+  box.innerHTML=ads.map(c=>`
+    <div class="admin-user-card">
+      <div>
+        <strong>${escapeHtml(adminCarTitle(c))}</strong>
+        <div class="admin-muted">${escapeHtml(c.seller_email||c.user_id||"—")} · 📍 ${escapeHtml(c.wilaya||"—")}</div>
+      </div>
+      <span class="admin-badge featured">${t("adminFeaturedBadge")}</span>
+    </div>`).join("");
+}
+
+function renderAdminUsers(){
+
+  const box=document.getElementById("adminUsersList");
+  if(!box) return;
+
+  const map=new Map();
+  getAdminAds().forEach(c=>{
+    if(!c.user_id) return;
+    if(!map.has(c.user_id)) map.set(c.user_id,{id:c.user_id,email:c.seller_email||"",ads:0});
+    map.get(c.user_id).ads++;
+    if(c.seller_email) map.get(c.user_id).email=c.seller_email;
+  });
+
+  const users=[...map.values()];
+  if(!users.length){
+    box.innerHTML=`<div class="empty-dashboard">${t("adminNoUsers")}</div>`;
+    return;
+  }
+
+  box.innerHTML=users.map(u=>`
+    <div class="admin-user-card">
+      <div><strong>${escapeHtml(u.email||u.id)}</strong><div class="admin-muted">ID: ${escapeHtml(u.id)}</div></div>
+      <span class="admin-badge">${u.ads} ${currentLanguage==="ar"?"إعلان":currentLanguage==="fr"?"annonce(s)":"ad(s)"}</span>
+    </div>`).join("");
+}
+
+async function loadAdminMessages(){
+
+  const box=document.getElementById("adminMessagesList");
+  if(!box) return;
+
+  try{
+    const{data,error}=await supabaseClient
+      .from("messages")
+      .select("id,message,created_at,car_id,sender_name,sender_id,cars(brand,model)")
+      .order("created_at",{ascending:false})
+      .limit(50);
+
+    if(error) throw error;
+
+    if(!data?.length){
+      box.innerHTML=`<div class="empty-dashboard">${t("adminNoMessages")}</div>`;
+      return;
+    }
+
+    box.innerHTML=data.map(m=>`<div class="dashboard-message">
+      <strong>💬 ${escapeHtml(m.cars?.brand||"")} ${escapeHtml(m.cars?.model||"")}</strong>
+      <p>${escapeHtml(m.message||"")}</p>
+      <small>${escapeHtml(m.sender_name||m.sender_id||"—")} · ${escapeHtml(m.created_at||"")}</small>
+    </div>`).join("");
+
+  }catch(e){
+    box.innerHTML=`<div class="admin-note">${escapeHtml(t("adminMessagesNote"))}<br><br>${escapeHtml(e.message||"")}</div>`;
+  }
+}
+
+async function adminDeleteCar(id){
+
+  if(!isAdmin) return;
+  if(!confirm(t("adminDeleteConfirm"))) return;
+
+  const{error}=await supabaseClient
+    .from("cars")
+    .delete()
+    .eq("id",id);
+
+  if(error){
+    alert(t("adminDeleteFail")+"\n\n"+error.message);
+    return;
+  }
+
+  alert(t("adminDeleteOk"));
+  await loadCars();
+  loadAdminDashboard();
+  renderAdminAds();
+  renderAdminFeatured();
+  renderAdminUsers();
+}
+
 /* =========================================================
    لوحة التحكم
 ========================================================= */
@@ -5136,7 +5668,7 @@ initAuth().then(
 supabaseClient
   .auth
   .onAuthStateChange(
-    (_e,s)=>{
+    async (_e,s)=>{
 
       const id=
         s?.user?.id||
@@ -5149,6 +5681,8 @@ supabaseClient
 
         currentUser=
           s?.user||null;
+
+        await refreshAdminStatus();
 
         updateHeader();
 
