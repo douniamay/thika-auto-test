@@ -4285,7 +4285,7 @@ async function archiveByEmail(p){
     await supabaseClient
       .functions
       .invoke(
-        "send-email",
+        "resend-email",
         {
           body:{
             ...p,
