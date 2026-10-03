@@ -4489,16 +4489,15 @@ async function sendMessage(){
     car.id
   );
 
-  const ok=
-    await archiveByEmail({
-
-      buyerEmail,
-
-      sellerEmail,
-
-      carInfo:
-        `${car.brand||""} ${car.model||""}`
-          .trim(),
+ 
+      
+const ok=await archiveByEmail({
+  messageId: ins?.id,
+  buyerEmail,
+  sellerEmail,
+  carInfo:
+    `${car.brand||""} ${car.model||""}`
+      .trim(),
 
       message:
         msg,
