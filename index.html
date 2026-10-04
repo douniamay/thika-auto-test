@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+<!-- Flags fixed: DZ / FR / GB -->
 <title>Thika Auto .dz — سوق السيارات</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -106,6 +107,64 @@ header h1 span{
   font-size:12px
 }
 
+.flag-icon{
+  display:block;
+  width:30px;
+  height:20px;
+  border-radius:3px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.18);
+  position:relative;
+  overflow:hidden;
+}
+.flag-dz{
+  background:linear-gradient(90deg,#006233 0 50%,#fff 50% 100%);
+}
+.flag-dz::before{
+  content:"";
+  position:absolute;
+  width:9px;
+  height:9px;
+  left:12px;
+  top:5px;
+  border:2px solid #d21034;
+  border-radius:50%;
+  border-left-color:transparent;
+  transform:rotate(-18deg);
+}
+.flag-dz::after{
+  content:"★";
+  position:absolute;
+  left:14px;
+  top:3px;
+  color:#d21034;
+  font-size:9px;
+  line-height:14px;
+}
+.flag-fr{
+  background:linear-gradient(90deg,#0055a4 0 33.333%,#fff 33.333% 66.666%,#ef4135 66.666% 100%);
+}
+.flag-gb{
+  background:#012169;
+}
+.flag-gb::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg,transparent 43%,#fff 43% 57%,transparent 57%),
+    linear-gradient(0deg,transparent 35%,#fff 35% 65%,transparent 65%),
+    linear-gradient(45deg,transparent 43%,#fff 43% 57%,transparent 57%),
+    linear-gradient(-45deg,transparent 43%,#fff 43% 57%,transparent 57%);
+}
+.flag-gb::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg,transparent 47%,#c8102e 47% 53%,transparent 53%),
+    linear-gradient(0deg,transparent 40%,#c8102e 40% 60%,transparent 60%);
+}
+
 .lang-switcher button.active{
   background:#facc15;
   border-color:#facc15
@@ -141,6 +200,42 @@ header h1 span{
   gap:8px;
   overflow:auto;
   border-bottom:1px solid #e2e8f0
+}
+
+.advanced-filters{overflow:visible;flex-wrap:wrap;align-items:center}
+.advanced-filters .filter-field{height:42px;margin:0}
+.advanced-filters .filter-select{width:150px;min-width:150px}
+.advanced-filters .filter-wilaya{width:185px;min-width:185px}
+.advanced-filters .filter-search{flex:1 1 210px;min-width:190px}
+.advanced-filters .filter-number{width:125px;min-width:115px}
+.advanced-filters .filter-year{width:100px;min-width:95px}
+.advanced-filters .filter-mileage{width:115px;min-width:105px}
+.advanced-filters .filter-submit{height:42px;padding-inline:18px}
+@media(max-width:700px){
+  .advanced-filters{display:grid;grid-template-columns:1fr 1fr;overflow:visible}
+  .advanced-filters .filter-field,.advanced-filters .filter-select,.advanced-filters .filter-wilaya,.advanced-filters .filter-search,.advanced-filters .filter-number,.advanced-filters .filter-year,.advanced-filters .filter-mileage,.advanced-filters .filter-submit{width:100%;min-width:0;flex:none}
+  .advanced-filters .filter-search,.advanced-filters .filter-submit{grid-column:1/-1}
+}
+
+.advanced-filters{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  overflow:visible;
+  align-items:stretch;
+}
+.filter-row{display:grid;gap:8px;width:100%;}
+.filter-row-top{grid-template-columns:1fr 1fr 1.5fr;}
+.filter-row-bottom{grid-template-columns:1fr 1fr 1fr 1fr 1fr auto;}
+.filter-row .filter-field{width:100%;min-width:0;}
+.price-hint{text-align:center;color:#64748b;font-size:10px;font-weight:700;min-height:14px;}
+@media(max-width:800px){
+ .filter-row-top,.filter-row-bottom{grid-template-columns:1fr 1fr;}
+ .filter-row-top .filter-search,.filter-row-bottom .filter-submit{grid-column:1/-1;}
+}
+@media(max-width:480px){
+ .filter-row-top,.filter-row-bottom{grid-template-columns:1fr;}
+ .filter-row-top .filter-search,.filter-row-bottom .filter-submit{grid-column:auto;}
 }
 
 .grid{
@@ -904,10 +999,10 @@ footer a{
 
 <div class="header-actions" id="headerActions"></div>
 
-<div class="lang-switcher">
-<button type="button" data-lang="ar" onclick="setLanguage('ar')">🇩🇿 العربية</button>
-<button type="button" data-lang="fr" onclick="setLanguage('fr')">🇫🇷 Français</button>
-<button type="button" data-lang="en" onclick="setLanguage('en')">🇬🇧 English</button>
+<div class="lang-switcher" aria-label="Language">
+<button type="button" data-lang="ar" onclick="setLanguage('ar')" aria-label="العربية" title="العربية"><span class="flag-icon flag-dz" aria-hidden="true"></span></button>
+<button type="button" data-lang="fr" onclick="setLanguage('fr')" aria-label="Français" title="Français"><span class="flag-icon flag-fr" aria-hidden="true"></span></button>
+<button type="button" data-lang="en" onclick="setLanguage('en')" aria-label="English" title="English"><span class="flag-icon flag-gb" aria-hidden="true"></span></button>
 </div>
 </header>
 
@@ -931,36 +1026,24 @@ style="margin-top:10px;font-size:11px;opacity:.75"
 data-i18n="loading"></p>
 </div>
 
-<div class="filters">
+<div class="filters advanced-filters">
 
-<select id="filterCategory"
-class="input"
-style="margin:0;min-width:150px"
-onchange="renderCars()">
-</select>
+  <div class="filter-row filter-row-top">
+    <select id="filterCategory" class="input filter-field filter-select" style="margin:0" onchange="applyFilters()"></select>
+    <select id="filterWilaya" class="input filter-field filter-select filter-wilaya" style="margin:0" onchange="applyFilters()"></select>
+    <input id="filterSearch" class="input filter-field filter-search" type="search" name="thika_car_search" autocomplete="off" inputmode="search" spellcheck="false" data-i18n-ph="search" style="margin:0" oninput="applyFilters()">
+  </div>
 
-<select id="filterWilaya"
-class="input"
-style="margin:0;min-width:160px"
-onchange="renderCars()">
-</select>
+  <div class="filter-row filter-row-bottom">
+    <input id="filterMinPrice" class="input filter-field filter-number" type="number" min="0" inputmode="numeric" autocomplete="off" data-i18n-ph="minPrice" style="margin:0" oninput="applyFilters()">
+    <input id="filterMaxPrice" class="input filter-field filter-number" type="number" min="0" inputmode="numeric" autocomplete="off" data-i18n-ph="maxPrice" style="margin:0" oninput="applyFilters()">
+    <input id="filterMinYear" class="input filter-field filter-year" type="number" min="1900" max="2100" inputmode="numeric" autocomplete="off" data-i18n-ph="minYear" style="margin:0" oninput="applyFilters()">
+    <input id="filterMaxYear" class="input filter-field filter-year" type="number" min="1900" max="2100" inputmode="numeric" autocomplete="off" data-i18n-ph="maxYear" style="margin:0" oninput="applyFilters()">
+    <input id="filterMaxMileage" class="input filter-field filter-mileage" type="number" min="0" inputmode="numeric" autocomplete="off" data-i18n-ph="maxMileage" style="margin:0" oninput="applyFilters()">
+    <button class="btn filter-submit" onclick="applyFilters()" style="white-space:nowrap" data-i18n="filter"></button>
+  </div>
 
-<input
-id="filterSearch"
-class="input"
-name="carSearchQuery"
-autocomplete="off"
-data-i18n-ph="search"
-style="margin:0;flex:1;min-width:140px"
-oninput="renderCars()">
-
-<button
-class="btn"
-onclick="renderCars()"
-style="white-space:nowrap"
-data-i18n="filter">
-</button>
-
+  <div class="price-hint" id="priceHint"></div>
 </div>
 
 <p
@@ -1787,6 +1870,11 @@ class="badge"
 data-i18n="chatBadge">
 </span>
 
+<div id="buyerSelectWrap" style="display:none;margin:10px 0">
+  <label style="display:block;font-size:12px;font-weight:800;margin-bottom:6px" data-i18n="chooseConversation"></label>
+  <select id="buyerSelect" class="input" style="margin:0" onchange="switchChatBuyer(this.value)"></select>
+</div>
+
 <div class="chat-container">
 
 <div
@@ -1946,9 +2034,9 @@ trust1:[
 ],
 
 trust2:[
-"✅ نسخة بريدية من كل رسالة للمشتري والبائع",
-"✅ Copie e-mail de chaque message",
-"✅ Email copy of every message"
+"✅ المحادثات محفوظة داخل الموقع",
+"✅ Conversations conservées sur le site",
+"✅ Conversations stored on the site"
 ],
 
 trust3:[
@@ -1964,9 +2052,9 @@ heroTitle:[
 ],
 
 heroText:[
-"كل محادثة بين البائع والمشتري تُحفظ في الموقع، وتصل نسخة منها بالبريد الإلكتروني للطرفين",
-"Chaque conversation acheteur-vendeur est conservée sur le site et une copie est envoyée par e-mail aux deux parties",
-"Every buyer–seller conversation is stored on the site and a copy is emailed to both parties"
+"كل محادثة بين البائع والمشتري تُحفظ داخل الموقع في قاعدة البيانات",
+"Chaque conversation acheteur-vendeur est conservée dans la base de données du site",
+"Every buyer–seller conversation is stored in the site database"
 ],
 
 loading:[
@@ -2010,6 +2098,12 @@ filter:[
 "🔍 Filtrer",
 "🔍 Filter"
 ],
+
+minPrice:["أقل سعر (دج)","Prix min. (DA)","Min price (DZD)"],
+maxPrice:["أعلى سعر (دج)","Prix max. (DA)","Max price (DZD)"],
+minYear:["من سنة","Année min.","From year"],
+maxYear:["إلى سنة","Année max.","To year"],
+maxMileage:["أقصى كم","Kilométrage max.","Max mileage"],
 
 ownerHelp:[
 "🔐 بعد تسجيل الدخول يظهر زر «حذف إعلاني» على إعلاناتك فقط.",
@@ -2132,9 +2226,9 @@ signupTitle:[
 ],
 
 loginNote:[
-"محادثاتك تُحفظ في قاعدة بيانات الموقع، وتُرسل نسخة منها بالبريد الإلكتروني",
-"Vos conversations sont conservées sur le site et une copie est envoyée par e-mail",
-"Your chats are stored on the site and a copy is sent by email"
+"محادثاتك تُحفظ في قاعدة بيانات الموقع ولا تُرسل إلى Gmail حاليًا",
+"Vos conversations sont conservées dans la base de données du site et aucun e-mail n’est envoyé pour le moment",
+"Your chats are stored in the site database and no email is sent for now"
 ],
 
 email:[
@@ -2225,6 +2319,36 @@ checkMail:[
 "✅ تحقق من بريدك الإلكتروني لتأكيد الحساب",
 "✅ Vérifiez votre e-mail pour confirmer le compte",
 "✅ Check your email to confirm your account"
+],
+
+emailNotConfirmed:[
+"⚠️ يجب تأكيد بريدك الإلكتروني أولاً. افتح رسالة التأكيد ثم ارجع للموقع.",
+"⚠️ Vous devez d'abord confirmer votre e-mail. Ouvrez le message de confirmation puis revenez au site.",
+"⚠️ You must confirm your email first. Open the confirmation email, then return to the site."
+],
+
+resendConfirm:[
+"إعادة إرسال رسالة التأكيد",
+"Renvoyer l'e-mail de confirmation",
+"Resend confirmation email"
+],
+
+confirmSent:[
+"✅ أُعيد إرسال رسالة التأكيد إلى بريدك.",
+"✅ L'e-mail de confirmation a été renvoyé.",
+"✅ The confirmation email was resent."
+],
+
+oneAdPerDay:[
+"⏳ يمكنك نشر إعلان واحد فقط كل 24 ساعة.",
+"⏳ Vous pouvez publier une seule annonce toutes les 24 heures.",
+"⏳ You can publish only one ad every 24 hours."
+],
+
+adRateError:[
+"⏳ لا يمكنك نشر إعلان جديد قبل مرور 24 ساعة.",
+"⏳ Vous ne pouvez pas publier une nouvelle annonce avant 24 heures.",
+"⏳ You cannot publish another ad before 24 hours have passed."
 ],
 
 addCarTitle:[
@@ -2365,10 +2489,46 @@ chatBadge:[
 "📧 Email copy to both parties"
 ],
 
+buyer:[
+"المشتري",
+"Acheteur",
+"Buyer"
+],
+
+seller:[
+"البائع",
+"Vendeur",
+"Seller"
+],
+
+noBuyerChats:[
+"لا توجد محادثات مع مشترين بعد.",
+"Aucune conversation avec un acheteur.",
+"No buyer conversations yet."
+],
+
+openConversation:[
+"فتح المحادثة",
+"Ouvrir la conversation",
+"Open conversation"
+],
+
+messagesWord:[
+"رسالة",
+"message(s)",
+"message(s)"
+],
+
 chatNote:[
 "كل رسالة تُحفظ في الموقع وتُرسل نسخة منها بالبريد الإلكتروني للبائع والمشتري",
 "Chaque message est conservé sur le site et copié par e-mail au vendeur et à l'acheteur",
 "Every message is stored on the site and copied by email to seller and buyer"
+],
+
+chooseConversation:[
+"اختر محادثة المشتري",
+"Choisir la conversation de l'acheteur",
+"Choose buyer conversation"
 ],
 
 quickAvailable:[
@@ -2438,15 +2598,15 @@ noSeller:[
 ],
 
 mailOk:[
-"✅ تم حفظ الرسالة وإرسال نسخة بالبريد للطرفين.",
-"✅ Message enregistré et copie envoyée par e-mail aux deux parties.",
-"✅ Message saved and a copy was emailed to both parties."
+"✅ تم حفظ الرسالة داخل قاعدة البيانات.",
+"✅ Message enregistré dans la base de données.",
+"✅ Message saved in the database."
 ],
 
 mailFail:[
-"⚠️ تم حفظ الرسالة، لكن تعذر إرسال نسخة البريد.",
-"⚠️ Message enregistré, mais la copie e-mail a échoué.",
-"⚠️ Message saved, but the email copy failed."
+"",
+"",
+""
 ],
 
 archiveTitle:[
@@ -2456,9 +2616,9 @@ archiveTitle:[
 ],
 
 archiveInfo:[
-"المحادثات محفوظة في قاعدة بيانات الموقع، ويُرسل بريد إلكتروني بنسخة منها للطرفين. الموقع لا يدخل إلى حساب Gmail ولا يضيف الرسائل إلى مجلد «المرسلة».",
-"Les conversations sont conservées sur le site et une copie est envoyée par e-mail aux deux parties. Le site n'accède pas à Gmail et n'ajoute rien au dossier « Envoyés ».",
-"Conversations are stored on the site and a copy is emailed to both parties. The site does not access Gmail or add anything to your Sent folder."
+"المحادثات محفوظة داخل قاعدة بيانات الموقع. لا يتم إرسال الرسائل إلى Gmail حاليًا.",
+"Les conversations sont conservées dans la base de données du site. Aucun message n'est envoyé à Gmail pour le moment.",
+"Conversations are stored in the site database. Messages are not sent to Gmail for now."
 ],
 
 archivePh:[
@@ -2510,9 +2670,9 @@ pol2t:[
 ],
 
 pol2b:[
-"تُحفظ كل رسالة في قاعدة بيانات الموقع، ثم تُرسل نسخة بريدية للمشتري والبائع عبر خدمة البريد المرتبطة بالموقع. هذا لا يعني الدخول إلى حساب Gmail. أي طلب من جهة رسمية للوصول إلى البيانات يخضع للقوانين والإجراءات المعمول بها.",
-"Chaque message est enregistré dans la base du site, puis une copie est envoyée par e-mail à l'acheteur et au vendeur. Cela n'implique aucun accès à Gmail. Toute demande officielle d'accès aux données suit les lois et procédures en vigueur.",
-"Each message is stored in the site database, then a copy is emailed to buyer and seller. This does not mean access to any Gmail account. Any official data request follows applicable laws and procedures."
+"تُحفظ كل رسالة في قاعدة بيانات الموقع مع ربطها بالمرسل والمستلم والإعلان والتاريخ والوقت. لا يتم إرسال الرسائل إلى Gmail حاليًا. أي طلب رسمي للوصول إلى البيانات يخضع للقوانين والإجراءات المعمول بها.",
+"Chaque message est enregistré dans la base avec l'expéditeur, le destinataire, l'annonce et la date. Aucun message n'est envoyé à Gmail pour le moment. Toute demande officielle d'accès aux données suit les lois et procédures en vigueur.",
+"Each message is stored with sender, recipient, listing and timestamp. Messages are not sent to Gmail for now. Official data requests follow applicable laws and procedures."
 ],
 
 pol3t:[
@@ -2552,7 +2712,7 @@ footer:[
 ],
 
 footerDesc:[
-"سوق سيارات جزائري: كل محادثة بين البائع والمشتري تُحفظ في الموقع، وتصل نسخة منها بالبريد الإلكتروني للطرفين.",
+"سوق سيارات جزائري: كل محادثة بين البائع والمشتري تُحفظ داخل الموقع في قاعدة البيانات.",
 "Marketplace automobile algérien : chaque conversation entre acheteur et vendeur est conservée sur le site, avec une copie envoyée par e-mail aux deux parties.",
 "Algerian car marketplace: every buyer–seller conversation is stored on the site, with a copy emailed to both parties."
 ],
@@ -3178,6 +3338,7 @@ let currentChatCarId=null;
 let currentCarData=null;
 let currentChatBuyerId=null;
 let carsCache=null;
+let forcedBuyerId=null;
 
 async function initAuth(){
 
@@ -3439,9 +3600,22 @@ async function doLogin(){
 
     return showErr(
       "loginError",
-      error.message.includes("Invalid login")
-      ?t("badLogin")
-      :error.message
+      /email not confirmed/i.test(error.message)
+      ?t("emailNotConfirmed")
+      :(error.message.includes("Invalid login")
+        ?t("badLogin")
+        :error.message)
+    );
+
+  }
+
+  if(!data?.user?.email_confirmed_at && !data?.user?.confirmed_at){
+
+    await supabaseClient.auth.signOut();
+
+    return showErr(
+      "loginError",
+      t("emailNotConfirmed")
     );
 
   }
@@ -3634,27 +3808,53 @@ async function doSignup(){
 
   }
 
-  currentUser=
-    data.session?.user||null;
-
-  if(currentUser){
-
-    closeModal("signupModal");
-
-    updateHeader();
-
-    loadCars();
-
-  }else{
-
-    showErr(
-      "signupError",
-      t("checkMail"),
-      true
-    );
-
+  /* لا نسمح بالدخول مباشرة بعد التسجيل.
+     حتى لو أعاد Supabase جلسة بسبب إعدادات المشروع،
+     نغلقها ونطلب تأكيد البريد أولاً. */
+  if(data?.session){
+    await supabaseClient.auth.signOut();
   }
 
+  currentUser=null;
+  isAdmin=false;
+  updateHeader();
+
+  showErr(
+    "signupError",
+    t("checkMail")+
+      `\n\n<a href="#" onclick="resendConfirmationEmail();return false" style="color:#1e40af;font-weight:800">${t("resendConfirm")}</a>`,
+    true
+  );
+
+  document.getElementById("signupError").innerHTML=
+    t("checkMail")+
+    `<br><br><a href="#" onclick="resendConfirmationEmail();return false" style="color:#1e40af;font-weight:800">${t("resendConfirm")}</a>`;
+
+}
+
+async function resendConfirmationEmail(){
+
+  const email=document
+    .getElementById("signupEmail")
+    .value
+    .trim()
+    .toLowerCase();
+
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    return showErr("signupError",t("badEmail"));
+  }
+
+  const {error}=await supabaseClient.auth.resend({
+    type:"signup",
+    email,
+    options:{emailRedirectTo:window.location.href}
+  });
+
+  if(error){
+    return showErr("signupError",error.message);
+  }
+
+  showErr("signupError",t("confirmSent"),true);
 }
 
 async function logout(){
@@ -3702,6 +3902,7 @@ async function loadCars(){
   }
 
   carsCache=data;
+  updatePriceGuide();
 
   renderCars();
 
@@ -3713,47 +3914,45 @@ async function loadCars(){
 
 }
 
-function renderCars(){
+function applyFilters(){
+  const input=document.getElementById("filterSearch");
+  if(input && /@/.test(input.value)) input.value="";
+  renderCars();
+}
 
+function updatePriceGuide(){
+  const hint=document.getElementById("priceHint");
+  if(!hint || !Array.isArray(carsCache) || !carsCache.length)return;
+  const prices=carsCache.map(c=>Number(c.price)).filter(n=>Number.isFinite(n)&&n>0);
+  if(!prices.length){hint.textContent="";return;}
+  const min=Math.min(...prices);
+  const max=Math.max(...prices);
+  const money=n=>new Intl.NumberFormat("fr-DZ").format(n)+" دج";
+  hint.textContent=`أقل سعر معلن: ${money(min)} • أعلى سعر معلن: ${money(max)}${max>3000000?" • توجد إعلانات فوق 3,000,000 دج":""}`;
+}
+
+function renderCars(){
   if(!carsCache)return;
 
-  const cat=
-    document.getElementById(
-      "filterCategory"
-    ).value;
+  const cat=document.getElementById("filterCategory")?.value||"";
+  const wilaya=document.getElementById("filterWilaya")?.value||"";
+  const q=(document.getElementById("filterSearch")?.value||"").trim().toLowerCase();
+  const minPrice=Math.max(0,Number(document.getElementById("filterMinPrice")?.value)||0);
+  const maxPriceRaw=Number(document.getElementById("filterMaxPrice")?.value);
+  const maxPrice=maxPriceRaw>0?maxPriceRaw:Infinity;
+  const minYear=Math.max(0,Number(document.getElementById("filterMinYear")?.value)||0);
+  const maxYearRaw=Number(document.getElementById("filterMaxYear")?.value);
+  const maxYear=maxYearRaw>0?maxYearRaw:Infinity;
+  const maxMileageRaw=Number(document.getElementById("filterMaxMileage")?.value);
+  const maxMileage=maxMileageRaw>0?maxMileageRaw:Infinity;
 
-  const wilaya=
-    document.getElementById(
-      "filterWilaya"
-    ).value;
-
-  const q=
-    document.getElementById(
-      "filterSearch"
-    ).value
-    .trim()
-    .toLowerCase();
-
-  let list=
-    carsCache.filter(c=>
-
-      (!cat||c.category===cat)&&
-
-      (!wilaya||c.wilaya===wilaya)&&
-
-      (
-        !q||
-        [
-          c.brand,
-          c.model,
-          c.description
-        ]
-        .join(" ")
-        .toLowerCase()
-        .includes(q)
-      )
-
-    );
+  let list=carsCache.filter(c=>{
+    const price=Number(c.price)||0;
+    const year=Number(c.year)||0;
+    const mileage=Number(c.mileage)||0;
+    const haystack=[c.brand,c.model,c.description,c.wilaya,c.phone].filter(Boolean).join(" ").toLowerCase();
+    return (!cat||c.category===cat)&&(!wilaya||c.wilaya===wilaya)&&(!q||haystack.includes(q))&&price>=minPrice&&price<=maxPrice&&year>=minYear&&year<=maxYear&&mileage<=maxMileage;
+  });
 
   /* الإعلانات المميزة في المقدمة */
   list.sort((a,b)=>{
@@ -3944,6 +4143,26 @@ async function addCar(){
       "publishBtn"
     );
 
+  /* حدّ سبام بسيط: إعلان واحد لكل حساب خلال 24 ساعة.
+     يجب دعم هذا أيضاً بسياسة/Trigger في Supabase للحماية من التحايل المباشر على API. */
+  const since=new Date(Date.now()-24*60*60*1000).toISOString();
+  const {data:recentAds,error:rateError}=await supabaseClient
+    .from("cars")
+    .select("id,created_at")
+    .eq("user_id",currentUser.id)
+    .gte("created_at",since)
+    .limit(1);
+
+  if(rateError){
+    alert(rateError.message);
+    return;
+  }
+
+  if(recentAds?.length){
+    alert(t("oneAdPerDay"));
+    return;
+  }
+
   const files=
     Array.from(
       document.getElementById(
@@ -4112,7 +4331,9 @@ async function addCar(){
 
   if(error){
 
-    alert(error.message);
+    alert(/one ad every 24 hours/i.test(error.message)
+      ?t("adRateError")
+      :error.message);
 
     return;
   }
@@ -4136,418 +4357,151 @@ async function addCar(){
 
 async function openChat(carId,buyerId){
   forcedBuyerId=buyerId||null;
+  if(!currentUser){ openModal("loginModal"); return; }
 
-  if(!currentUser){
-
-    openModal("loginModal");
-
-    return;
-  }
-
-  const{
-    data:car,
-    error
-  }=
-  await supabaseClient
-    .from("cars")
-    .select("*")
-    .eq("id",carId)
-    .single();
-
-  if(error||!car){
-
-    alert(t("loadFail"));
-
-    return;
-  }
+  const {data:car,error}=await supabaseClient
+    .from("cars").select("*").eq("id",carId).single();
+  if(error||!car){ alert(t("loadFail")); return; }
 
   currentChatCarId=car.id;
-
   currentCarData=car;
-
   currentChatBuyerId=null;
-
-  document.getElementById(
-    "chatCarTitle"
-  ).innerText=
-    `${car.brand} ${car.model}`;
-
+  document.getElementById("chatCarTitle").innerText=`${car.brand||""} ${car.model||""}`.trim();
   openModal("chatModal");
 
-  await loadMessages(car.id);
-
+  const isSeller=car.user_id===currentUser.id;
+  const wrap=document.getElementById("buyerSelectWrap");
+  const select=document.getElementById("buyerSelect");
+  if(isSeller){
+    wrap.style.display="block";
+    await loadBuyerConversations(car.id,buyerId||null);
+  }else{
+    wrap.style.display="none";
+    currentChatBuyerId=currentUser.id;
+    await loadConversationMessages(car.id,currentUser.id);
+  }
 }
 
-async function loadMessages(carId){
+async function loadBuyerConversations(carId,preferredBuyerId){
+  const select=document.getElementById("buyerSelect");
+  const box=document.getElementById("chatMessages");
+  const {data,error}=await supabaseClient
+    .from("messages")
+    .select("buyer_id,buyer_email,sender_id,sender_name,message,created_at")
+    .eq("car_id",carId)
+    .eq("seller_id",currentUser.id)
+    .order("created_at",{ascending:false});
+  if(error){
+    box.innerHTML=`<div class="chat-error">❌ ${escapeHtml(t("loadFail"))}: ${escapeHtml(error.message)}</div>`;
+    return;
+  }
+  const map=new Map();
+  (data||[]).forEach(m=>{
+    if(!m.buyer_id||map.has(m.buyer_id)) return;
+    map.set(m.buyer_id,m);
+  });
+  const buyers=[...map.entries()];
+  if(!buyers.length){
+    select.innerHTML=`<option value="">${escapeHtml(t("noBuyerChats"))}</option>`;
+    currentChatBuyerId=null;
+    box.innerHTML=`<div class="msg system">${escapeHtml(t("noBuyerChats"))}</div>`;
+    return;
+  }
+  select.innerHTML=buyers.map(([id,m])=>{
+    const label=m.sender_name||t("buyer");
+    return `<option value="${escapeHtml(id)}">${escapeHtml(label)}</option>`;
+  }).join("");
+  const chosen=(preferredBuyerId&&map.has(preferredBuyerId))?preferredBuyerId:buyers[0][0];
+  select.value=chosen;
+  currentChatBuyerId=chosen;
+  await loadConversationMessages(carId,chosen);
+}
 
-  const{
-    data,
-    error
-  }=
-  await supabaseClient
+async function switchChatBuyer(buyerId){
+  if(!buyerId||!currentChatCarId) return;
+  currentChatBuyerId=buyerId;
+  await loadConversationMessages(currentChatCarId,buyerId);
+}
+
+async function loadConversationMessages(carId,buyerId){
+  const {data,error}=await supabaseClient
     .from("messages")
     .select("*")
     .eq("car_id",carId)
-    .order(
-      "created_at",
-      {ascending:true}
-    );
-
-  const box=
-    document.getElementById(
-      "chatMessages"
-    );
-
+    .eq("buyer_id",buyerId)
+    .order("created_at",{ascending:true});
+  const box=document.getElementById("chatMessages");
   if(error){
-
-    box.innerHTML=
-      `<div class="chat-error">
-        ❌ ${t("loadFail")}:
-        ${escapeHtml(error.message)}
-      </div>`;
-
+    box.innerHTML=`<div class="chat-error">❌ ${escapeHtml(t("loadFail"))}: ${escapeHtml(error.message)}</div>`;
     return;
   }
-
-  if(!data.length){
-
-    currentChatBuyerId=null;
-
-    box.innerHTML=
-      `<div class="msg system">
-        ${t("noMsgs")}
-      </div>`;
-
+  if(!data?.length){
+    box.innerHTML=`<div class="msg system">${escapeHtml(t("noMsgs"))}</div>`;
     return;
   }
-
- const lastFromBuyer=[...data].reverse()
-  .find(m=>m.buyer_id && m.sender_id!==currentUser.id);
-currentChatBuyerId=
-  (lastFromBuyer||data.find(m=>m.buyer_id)||{}).buyer_id||null;
-  const loc=
-    currentLanguage==="ar"
-      ?"ar-DZ"
-      :currentLanguage==="fr"
-        ?"fr-DZ"
-        :"en-DZ";
-
-  box.innerHTML=
-    data.map(m=>{
-
-      const mine=
-        m.sender_id===currentUser.id;
-
-      return `
-
-<div class="msg ${mine?"me":"other"}">
-
-<strong>
-${mine
-  ?t("me")
-  :escapeHtml(
-      m.sender_name||
-      t("other")
-    )
-}:
-</strong>
-
-${escapeHtml(m.message)}
-
-<br>
-
-<small>
-🕒 ${
-  escapeHtml(
-    new Date(
-      m.created_at
-    ).toLocaleString(loc)
-  )
-}
-</small>
-
-</div>`;
-
-    }).join("");
-
-  box.scrollTop=
-    box.scrollHeight;
-
-}
-
-async function archiveByEmail(p){
-
-  try{
-
-    const{
-      error
-    }=
-    await supabaseClient
-      .functions
-      .invoke(
-        "resend-email",
-        {
-          body:{
-            ...p,
-            subject:
-              `Thika Auto .dz — ${p.carInfo}`
-          }
-        }
-      );
-
-    if(error)
-      throw error;
-
-    return true;
-
-  }catch(e){
-
-    console.error(
-      "archive email error:",
-      e
-    );
-
-    return false;
-  }
-
+  const loc=currentLanguage==="ar"?"ar-DZ":currentLanguage==="fr"?"fr-DZ":"en-DZ";
+  box.innerHTML=data.map(m=>{
+    const mine=m.sender_id===currentUser.id;
+    return `<div class="msg ${mine?"me":"other"}">
+      <strong>${mine?escapeHtml(t("me")):escapeHtml(m.sender_name||t("other"))}:</strong>
+      ${escapeHtml(m.message)}<br>
+      <small>🕒 ${escapeHtml(new Date(m.created_at).toLocaleString(loc))}</small>
+    </div>`;
+  }).join("");
+  box.scrollTop=box.scrollHeight;
 }
 
 function sendQuickMessage(){
-
-  document.getElementById(
-    "chatInput"
-  ).value=
-    t("quickAvailableMsg");
-
+  document.getElementById("chatInput").value=t("quickAvailableMsg");
   sendMessage();
-
 }
 
 async function sendMessage(){
+  if(!currentUser){ openModal("loginModal"); return; }
+  const input=document.getElementById("chatInput");
+  const msg=input.value.trim();
+  if(!msg||!currentCarData) return;
+  const car=currentCarData;
+  const sellerId=car.user_id;
+  if(!sellerId){ alert(t("noSeller")); return; }
+  const isSeller=sellerId===currentUser.id;
+  let buyerId=isSeller?currentChatBuyerId:currentUser.id;
+  if(!buyerId){ alert(t("waitBuyer")); return; }
 
-  if(!currentUser){
+  const senderEmail=(currentUser.email||"").toLowerCase();
+  const buyerEmail=isSeller?null:senderEmail;
+  const sellerEmail=(car.seller_email||"").toLowerCase() || (isSeller?senderEmail:"");
+  const senderName=currentUser.user_metadata?.username||currentUser.user_metadata?.full_name||currentUser.email||t("other");
 
-    openModal("loginModal");
-
-    return;
-  }
-
-  const input=
-    document.getElementById(
-      "chatInput"
-    );
-
-  const msg=
-    input.value.trim();
-
-  if(!msg||!currentCarData)
-    return;
-
-  const car=
-    currentCarData;
-
-  const sellerId=
-    car.user_id;
-
-  const sellerEmail=
-    (
-      car.seller_email||
-      ""
-    ).toLowerCase();
-
-  if(!sellerId||!sellerEmail){
-
-    alert(t("noSeller"));
-
-    return;
-  }
-
-  const isSeller=
-    sellerId===currentUser.id;
-
-  let buyerId;
-  let buyerEmail;
-
+  // نجلب بريد الطرف الآخر من رسالة سابقة في نفس المحادثة، إن وجد، بدون عرضه للمستخدم.
+  let resolvedBuyerEmail=buyerEmail||"";
+  let resolvedSellerEmail=sellerEmail||"";
   if(isSeller){
-
-    buyerId=
-      currentChatBuyerId;
-
-    if(!buyerId){
-
-      alert(t("waitBuyer"));
-
-      return;
-    }
-
-    const{
-      data:prev,
-      error:pe
-    }=
-    await supabaseClient
-      .from("messages")
-      .select("buyer_email")
-      .eq("car_id",car.id)
-      .eq("buyer_id",buyerId)
-      .limit(1);
-
-    if(pe){
-
-      alert(
-        t("sendFail")+
-        ": "+
-        pe.message
-      );
-
-      return;
-    }
-
-    buyerEmail=
-      prev?.[0]?.buyer_email||
-      "";
-
-  }else{
-
-    buyerId=
-      currentUser.id;
-
-    buyerEmail=
-      currentUser.email
-        .toLowerCase();
-
+    const {data:prev,error:pe}=await supabaseClient.from("messages")
+      .select("buyer_email,seller_email").eq("car_id",car.id).eq("buyer_id",buyerId).limit(1);
+    if(pe){ alert(t("sendFail")+": "+pe.message); return; }
+    resolvedBuyerEmail=prev?.[0]?.buyer_email||"";
+    resolvedSellerEmail=senderEmail;
   }
+  if(!resolvedBuyerEmail && !isSeller){ resolvedBuyerEmail=senderEmail; }
 
-  if(!buyerEmail){
-
-    alert(t("sendFail"));
-
-    return;
-  }
-
-  const{
-    data:ins,
-    error
-  }=
-  await supabaseClient
-    .from("messages")
-    .insert({
-
-      car_id:
-        car.id,
-
-      sender_id:
-        currentUser.id,
-
-      buyer_id:
-        buyerId,
-
-      seller_id:
-        sellerId,
-
-      sender_name:
-        currentUser
-          .user_metadata
-          ?.username||
-        currentUser
-          .user_metadata
-          ?.full_name||
-        currentUser.email,
-
-      buyer_email:
-        buyerEmail,
-
-      seller_email:
-        sellerEmail,
-
-      message:
-        msg,
-
-      is_seller:
-        isSeller
-
-    })
-    .select()
-    .single();
-
-  if(error){
-
-    alert(
-      t("sendFail")+
-      ": "+
-      error.message
-    );
-
-    return;
-  }
-
-  currentChatBuyerId=
-    buyerId;
-
+  const payload={
+    car_id:car.id,
+    sender_id:currentUser.id,
+    buyer_id:buyerId,
+    seller_id:sellerId,
+    sender_name:senderName,
+    buyer_email:resolvedBuyerEmail,
+    seller_email:resolvedSellerEmail,
+    message:msg,
+    is_seller:isSeller
+  };
+  const {error}=await supabaseClient.from("messages").insert(payload);
+  if(error){ alert(t("sendFail")+": "+error.message); return; }
+  currentChatBuyerId=buyerId;
   input.value="";
-
-  await loadMessages(
-    car.id
-  );
-
- 
-      
-const ok=await archiveByEmail({
-  messageId: ins?.id,
-  buyerEmail,
-  sellerEmail,
-  carInfo:
-    `${car.brand||""} ${car.model||""}`
-      .trim(),
-
-      message:
-        msg,
-
-      wilaya:
-        car.wilaya||"",
-
-      phone:
-        car.phone||"",
-
-      senderEmail:
-        currentUser.email,
-
-      senderName:
-        currentUser
-          .user_metadata
-          ?.full_name||
-        currentUser.email,
-
-      sentAt:
-        ins?.created_at||
-        new Date().toISOString()
-
-    });
-
-  const box=
-    document.getElementById(
-      "chatMessages"
-    );
-
-  box.insertAdjacentHTML(
-    "beforeend",
-    `<div class="${
-      ok
-      ?"chat-ok"
-      :"chat-error"
-    }">
-      ${t(
-        ok
-        ?"mailOk"
-        :"mailFail"
-      )}
-    </div>`
-  );
-
-  box.scrollTop=
-    box.scrollHeight;
-
+  await loadConversationMessages(car.id,buyerId);
 }
-
 
 /* =========================================================
    الأرشيف
@@ -4557,493 +4511,30 @@ let archiveRows=[];
 async function searchArchive(){
   if(!currentUser){openModal("loginModal");return;}
   const q=document.getElementById("archiveSearch").value.trim().toLowerCase();
-  const{data,error}=await supabaseClient
+  const {data,error}=await supabaseClient
     .from("messages")
     .select("*,cars(brand,model)")
     .or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`)
-    .order("created_at",{ascending:false})
-    .limit(100);
+    .order("created_at",{ascending:false}).limit(200);
   const out=document.getElementById("archiveResults");
-  if(error){
-    out.innerHTML=`<div class="chat-error">${escapeHtml(error.message)}</div>`;
-    return;
-  }
-  const rows=data.filter(m=>!q||
-    (m.message+" "+(m.cars?.brand||"")+" "+(m.cars?.model||""))
-    .toLowerCase().includes(q));
+  if(error){out.innerHTML=`<div class="chat-error">${escapeHtml(error.message)}</div>`;return;}
+  const rows=(data||[]).filter(m=>!q||(m.message+" "+(m.cars?.brand||"")+" "+(m.cars?.model||"")).toLowerCase().includes(q));
   archiveRows=rows;
   const loc=currentLanguage==="ar"?"ar-DZ":currentLanguage==="fr"?"fr-DZ":"en-DZ";
-  const seen=new Set();
-  out.innerHTML=`<p>${t("archiveCount",{n:rows.length})}</p>`+
-  rows.map((m,i)=>{
+  const groups=new Map();
+  rows.forEach(m=>{
     const key=m.car_id+"|"+m.buyer_id;
-    const canReply=m.seller_id===currentUser.id&&!seen.has(key);
-    seen.add(key);
-    const replyBox=canReply?`
-      <div style="display:flex;gap:6px;margin-top:8px">
-        <input class="input" id="reply_${i}"
-          placeholder="${escapeHtml(t("msgPh"))}"
-          style="flex:1;margin:0"
-          onkeypress="if(event.key==='Enter')replyFromArchive(${i})">
-        <button class="btn" id="replyBtn_${i}"
-          onclick="replyFromArchive(${i})"
-          style="margin:0">${t("send")}</button>
-      </div>`:"";
-    return `<div class="box" style="font-size:11px;padding:10px;margin:6px 0">
-      <b>${escapeHtml(m.cars?.brand||"")} ${escapeHtml(m.cars?.model||"")}</b>
-      - ${escapeHtml(new Date(m.created_at).toLocaleString(loc))}
-      <br>${escapeHtml(m.message)}<br>
-      <small>📧 ${escapeHtml(m.buyer_email)} → ${escapeHtml(m.seller_email)}</small>
-      ${replyBox}
-    </div>`;
-  }).join("");
-}
-
-async function replyFromArchive(i){
-  const m=archiveRows[i];
-  const input=document.getElementById("reply_"+i);
-  const btn=document.getElementById("replyBtn_"+i);
-  if(!m||!input||!currentUser)return;
-  const msg=input.value.trim();
-  if(!msg)return;
-  btn.disabled=true;
-  const myName=currentUser.user_metadata?.username||
-    currentUser.user_metadata?.full_name||currentUser.email;
-  const{data:ins,error}=await supabaseClient
-    .from("messages")
-    .insert({
-      car_id:m.car_id,
-      sender_id:currentUser.id,
-      buyer_id:m.buyer_id,
-      seller_id:currentUser.id,
-      sender_name:myName,
-      buyer_email:m.buyer_email,
-      seller_email:currentUser.email.toLowerCase(),
-      message:msg,
-      is_seller:true
-    })
-    .select().single();
-  btn.disabled=false;
-  if(error){
-    alert(t("sendFail")+": "+error.message);
-    return;
-  }
-  input.value="";
-  const ok=await archiveByEmail({
-    buyerEmail:m.buyer_email,
-    sellerEmail:currentUser.email.toLowerCase(),
-    carInfo:`${m.cars?.brand||""} ${m.cars?.model||""}`.trim(),
-    message:msg,
-    wilaya:"",
-    phone:"",
-    senderEmail:currentUser.email,
-    senderName:myName,
-    sentAt:ins?.created_at||new Date().toISOString()
+    if(!groups.has(key)) groups.set(key,{car:m.cars||{},buyerId:m.buyer_id,last:m, count:0});
+    groups.get(key).count++;
   });
-  if(!ok)alert(t("mailFail"));
-  searchArchive();
-}
-async function searchArchiveOld(){
-  
-
-  if(!currentUser){
-
-    openModal("loginModal");
-
-    return;
-  }
-
-  const q=
-    document
-      .getElementById(
-        "archiveSearch"
-      )
-      .value
-      .trim()
-      .toLowerCase();
-
-  const{
-    data,
-    error
-  }=
-  await supabaseClient
-    .from("messages")
-    .select(
-      "*,cars(brand,model)"
-    )
-    .or(
-      `buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`
-    )
-    .order(
-      "created_at",
-      {ascending:false}
-    )
-    .limit(100);
-
-  const out=
-    document.getElementById(
-      "archiveResults"
-    );
-
-  if(error){
-
-    out.innerHTML=
-      `<div class="chat-error">
-        ${escapeHtml(error.message)}
-      </div>`;
-
-    return;
-  }
-
-  const rows=
-    data.filter(m=>
-
-      !q||
-
-      (
-        m.message+
-        " "+
-        (m.cars?.brand||"")+
-        " "+
-        (m.cars?.model||"")
-      )
-      .toLowerCase()
-      .includes(q)
-
-    );
-
-  const loc=
-    currentLanguage==="ar"
-      ?"ar-DZ"
-      :currentLanguage==="fr"
-        ?"fr-DZ"
-        :"en-DZ";
-
-  out.innerHTML=
-
-    `<p>
-      ${t(
-        "archiveCount",
-        {n:rows.length}
-      )}
-    </p>`
-
-    +
-
-    rows.map(m=>
-
-      `<div
-        class="box"
-        style="
-          font-size:11px;
-          padding:10px;
-          margin:6px 0
-        ">
-
-        <b>
-          ${escapeHtml(
-            m.cars?.brand||""
-          )}
-          ${escapeHtml(
-            m.cars?.model||""
-          )}
-        </b>
-
-        -
-
-        ${escapeHtml(
-          new Date(
-            m.created_at
-          ).toLocaleString(loc)
-        )}
-
-        <br>
-
-        ${escapeHtml(
-          m.message
-        )}
-
-        <br>
-
-        <small>
-          📧
-          ${escapeHtml(
-            m.buyer_email
-          )}
-          →
-          ${escapeHtml(
-            m.seller_email
-          )}
-        </small>
-
-      </div>`
-
-    ).join("");
-
-}
-
-
-
-/* =========================================================
-   إدارة الأدمن
-========================================================= */
-
-async function refreshAdminStatus(){
-
-  isAdmin=false;
-
-  if(!currentUser)
-    return false;
-
-  try{
-
-    const{data,error}=await supabaseClient
-      .from("admins")
-      .select("user_id")
-      .eq("user_id",currentUser.id)
-      .maybeSingle();
-
-    if(!error && data?.user_id===currentUser.id)
-      isAdmin=true;
-
-  }catch(e){
-    console.error("admin status error:",e);
-  }
-
-  return isAdmin;
-}
-
-async function openAdminDashboard(){
-
-  if(!currentUser){
-    openModal("loginModal");
-    return;
-  }
-
-  const ok=await refreshAdminStatus();
-
-  if(!ok){
-    alert(t("adminNotAllowed"));
-    return;
-  }
-
-  showPage("admin");
-  loadAdminDashboard();
-}
-
-function adminTab(tab,button){
-
-  if(!isAdmin){
-    openAdminDashboard();
-    return;
-  }
-
-  document.querySelectorAll(".admin-section").forEach(s=>s.classList.remove("active"));
-  document.querySelectorAll(".admin-nav").forEach(b=>b.classList.remove("active"));
-
-  const target=document.getElementById("admin"+tab.charAt(0).toUpperCase()+tab.slice(1));
-  if(target) target.classList.add("active");
-  if(button) button.classList.add("active");
-
-  if(tab==="overview") loadAdminDashboard();
-  if(tab==="ads") renderAdminAds();
-  if(tab==="featured") renderAdminFeatured();
-  if(tab==="users") renderAdminUsers();
-  if(tab==="messages") loadAdminMessages();
-}
-
-function getAdminAds(){
-  return Array.isArray(carsCache)?carsCache.slice():[];
-}
-
-function adminCarTitle(c){
-  return `${c.brand||""} ${c.model||""}`.trim()||"—";
-}
-
-function adminCarMatches(c,q){
-  if(!q) return true;
-  const hay=[
-    c.brand,c.model,c.wilaya,c.seller_email,c.phone,c.description,c.user_id
-  ].filter(Boolean).join(" ").toLowerCase();
-  return hay.includes(q);
-}
-
-async function loadAdminDashboard(){
-
-  if(!isAdmin) return;
-
-  const ads=getAdminAds();
-  const featured=ads.filter(c=>c.is_featured===true);
-  const users=new Set(ads.map(c=>c.user_id).filter(Boolean));
-
-  document.getElementById("adminAdsCount").textContent=ads.length;
-  document.getElementById("adminFeaturedCount").textContent=featured.length;
-  document.getElementById("adminUsersCount").textContent=users.size;
-
-  const msgBox=document.getElementById("adminMessagesCount");
-  try{
-    const{count,error}=await supabaseClient
-      .from("messages")
-      .select("id",{count:"exact",head:true});
-    msgBox.textContent=error?"—":String(count||0);
-  }catch(e){
-    msgBox.textContent="—";
-  }
-
-  renderAdminRecentAds();
-}
-
-function renderAdminRecentAds(){
-
-  const box=document.getElementById("adminRecentAds");
-  if(!box) return;
-
-  const ads=getAdminAds().slice(0,8);
-  if(!ads.length){
-    box.innerHTML=`<div class="empty-dashboard">${t("adminNoAds")}</div>`;
-    return;
-  }
-
-  box.innerHTML=ads.map(c=>`
-    <div class="admin-user-card">
-      <div>
-        <strong>${escapeHtml(adminCarTitle(c))}</strong>
-        <div class="admin-muted">📍 ${escapeHtml(c.wilaya||"—")} · ${Number(c.price||0).toLocaleString()} دج</div>
-      </div>
-      <div>
-        ${c.is_featured===true?`<span class="admin-badge featured">${t("adminFeaturedBadge")}</span>`:`<span class="admin-badge">${t("adminNormal")}</span>`}
-      </div>
-    </div>`).join("");
-}
-
-function renderAdminAds(){
-
-  const box=document.getElementById("adminAdsTable");
-  if(!box) return;
-
-  const q=(document.getElementById("adminAdsSearch")?.value||"").trim().toLowerCase();
-  const ads=getAdminAds().filter(c=>adminCarMatches(c,q));
-
-  if(!ads.length){
-    box.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:25px">${t("adminNoAds")}</td></tr>`;
-    return;
-  }
-
-  box.innerHTML=ads.map(c=>{
-    const img=c.image_url||c.images?.[0]||"";
-    const status=c.is_featured===true
-      ? `<span class="admin-badge featured">${t("adminFeaturedBadge")}</span>`
-      : `<span class="admin-badge">${t("adminNormal")}</span>`;
-
-    return `<tr>
-      <td>${img?`<img src="${escapeHtml(img)}" alt="">`:"—"}</td>
-      <td><strong>${escapeHtml(adminCarTitle(c))}</strong><br><span class="admin-muted">${escapeHtml(c.wilaya||"—")}</span></td>
-      <td>${escapeHtml(c.seller_email||c.user_id||"—")}</td>
-      <td>${Number(c.price||0).toLocaleString()} دج</td>
-      <td>${status}</td>
-      <td><button class="btn admin-danger" style="font-size:10px;padding:6px 9px" onclick="adminDeleteCar('${escapeHtml(c.id)}')">${t("adminDelete")}</button></td>
-    </tr>`;
-  }).join("");
-}
-
-function renderAdminFeatured(){
-
-  const box=document.getElementById("adminFeaturedList");
-  if(!box) return;
-
-  const ads=getAdminAds().filter(c=>c.is_featured===true);
-  if(!ads.length){
-    box.innerHTML=`<div class="empty-dashboard">${t("adminNoFeatured")}</div>`;
-    return;
-  }
-
-  box.innerHTML=ads.map(c=>`
-    <div class="admin-user-card">
-      <div>
-        <strong>${escapeHtml(adminCarTitle(c))}</strong>
-        <div class="admin-muted">${escapeHtml(c.seller_email||c.user_id||"—")} · 📍 ${escapeHtml(c.wilaya||"—")}</div>
-      </div>
-      <span class="admin-badge featured">${t("adminFeaturedBadge")}</span>
-    </div>`).join("");
-}
-
-function renderAdminUsers(){
-
-  const box=document.getElementById("adminUsersList");
-  if(!box) return;
-
-  const map=new Map();
-  getAdminAds().forEach(c=>{
-    if(!c.user_id) return;
-    if(!map.has(c.user_id)) map.set(c.user_id,{id:c.user_id,email:c.seller_email||"",ads:0});
-    map.get(c.user_id).ads++;
-    if(c.seller_email) map.get(c.user_id).email=c.seller_email;
-  });
-
-  const users=[...map.values()];
-  if(!users.length){
-    box.innerHTML=`<div class="empty-dashboard">${t("adminNoUsers")}</div>`;
-    return;
-  }
-
-  box.innerHTML=users.map(u=>`
-    <div class="admin-user-card">
-      <div><strong>${escapeHtml(u.email||u.id)}</strong><div class="admin-muted">ID: ${escapeHtml(u.id)}</div></div>
-      <span class="admin-badge">${u.ads} ${currentLanguage==="ar"?"إعلان":currentLanguage==="fr"?"annonce(s)":"ad(s)"}</span>
-    </div>`).join("");
-}
-
-async function loadAdminMessages(){
-
-  const box=document.getElementById("adminMessagesList");
-  if(!box) return;
-
-  try{
-    const{data,error}=await supabaseClient
-      .from("messages")
-      .select("id,message,created_at,car_id,sender_name,sender_id,cars(brand,model)")
-      .order("created_at",{ascending:false})
-      .limit(50);
-
-    if(error) throw error;
-
-    if(!data?.length){
-      box.innerHTML=`<div class="empty-dashboard">${t("adminNoMessages")}</div>`;
-      return;
-    }
-
-    box.innerHTML=data.map(m=>`<div class="dashboard-message">
-      <strong>💬 ${escapeHtml(m.cars?.brand||"")} ${escapeHtml(m.cars?.model||"")}</strong>
-      <p>${escapeHtml(m.message||"")}</p>
-      <small>${escapeHtml(m.sender_name||m.sender_id||"—")} · ${escapeHtml(m.created_at||"")}</small>
-    </div>`).join("");
-
-  }catch(e){
-    box.innerHTML=`<div class="admin-note">${escapeHtml(t("adminMessagesNote"))}<br><br>${escapeHtml(e.message||"")}</div>`;
-  }
-}
-
-async function adminDeleteCar(id){
-
-  if(!isAdmin) return;
-  if(!confirm(t("adminDeleteConfirm"))) return;
-
-  const{error}=await supabaseClient
-    .from("cars")
-    .delete()
-    .eq("id",id);
-
-  if(error){
-    alert(t("adminDeleteFail")+"\n\n"+error.message);
-    return;
-  }
-
-  alert(t("adminDeleteOk"));
-  await loadCars();
-  loadAdminDashboard();
-  renderAdminAds();
-  renderAdminFeatured();
-  renderAdminUsers();
+  const list=[...groups.values()];
+  out.innerHTML=`<p>${escapeHtml(t("archiveCount",{n:rows.length}))}</p>`+
+    (list.length?list.map((g,i)=>`<div class="box" style="padding:12px;margin:8px 0">
+      <b>💬 ${escapeHtml(g.car?.brand||"")} ${escapeHtml(g.car?.model||"")}</b>
+      <div style="font-size:11px;color:#64748b;margin-top:5px">${escapeHtml(g.last?.sender_name||t("buyer"))} · ${escapeHtml(new Date(g.last.created_at).toLocaleString(loc))}</div>
+      <div style="margin-top:6px">${escapeHtml(g.last.message||"")}</div>
+      <button class="btn" style="margin-top:8px" onclick="openChat('${escapeHtml(g.last.car_id)}','${escapeHtml(g.buyerId)}')">${escapeHtml(t("openConversation"))}</button>
+    </div>`).join(""):`<div class="empty-dashboard">${escapeHtml(t("noMsgs"))}</div>`);
 }
 
 /* =========================================================
@@ -5321,97 +4812,32 @@ function renderDashboardAds(){
 }
 
 async function loadDashboardMessages(){
-
-  const box=
-    document.getElementById(
-      "dashboardMessagesList"
-    );
-
-  if(!box||!currentUser)
-    return;
-
-  const{
-    data,
-    error
-  }=
-  await supabaseClient
+  const box=document.getElementById("dashboardMessagesList");
+  if(!box||!currentUser)return;
+  const {data,error}=await supabaseClient
     .from("messages")
-    .select(
-      "id,message,created_at,car_id,sender_id,sender_name,cars(brand,model)"
-    )
-    .or(
-      `buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`
-    )
-    .order(
-      "created_at",
-      {ascending:false}
-    )
-    .limit(15);
-
-  if(error){
-
-    box.innerHTML=
-      `<div class="chat-error">
-        ${escapeHtml(error.message)}
-      </div>`;
-
-    return;
-  }
-
-  if(!data?.length){
-
-    box.innerHTML=
-      `<div class="empty-dashboard">
-        ${t("noDashboardMessages")}
-      </div>`;
-
-    return;
-  }
-
-  const loc=
-    currentLanguage==="ar"
-      ?"ar-DZ"
-      :currentLanguage==="fr"
-        ?"fr-DZ"
-        :"en-DZ";
-
-  box.innerHTML=
-    data.map(m=>
-
-      `<div class="dashboard-message">
-
-        <strong>
-          💬
-          ${escapeHtml(
-            m.cars?.brand||""
-          )}
-          ${escapeHtml(
-            m.cars?.model||""
-          )}
-        </strong>
-
-        <p>
-          ${escapeHtml(
-            m.message
-          )}
-        </p>
-
-        <small>
-          ${escapeHtml(
-            m.sender_name||""
-          )}
-          —
-          ${escapeHtml(
-            new Date(
-              m.created_at
-            ).toLocaleString(loc)
-          )}
-        </small>
-
-      </div>`
-
-    ).join("");
-
+    .select("id,message,created_at,car_id,buyer_id,seller_id,sender_id,sender_name,cars(brand,model)")
+    .or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`)
+    .order("created_at",{ascending:false}).limit(200);
+  if(error){box.innerHTML=`<div class="chat-error">${escapeHtml(error.message)}</div>`;return;}
+  if(!data?.length){box.innerHTML=`<div class="empty-dashboard">${escapeHtml(t("noDashboardMessages"))}</div>`;return;}
+  const groups=new Map();
+  data.forEach(m=>{
+    const key=m.car_id+"|"+m.buyer_id;
+    if(!groups.has(key))groups.set(key,{...m,count:0});
+    groups.get(key).count++;
+  });
+  const loc=currentLanguage==="ar"?"ar-DZ":currentLanguage==="fr"?"fr-DZ":"en-DZ";
+  box.innerHTML=[...groups.values()].map(g=>{
+    const isSeller=g.seller_id===currentUser.id;
+    const title=isSeller?(g.sender_id===g.buyer_id?(g.sender_name||t("buyer")):t("buyer")):t("seller");
+    return `<div class="dashboard-message" style="padding:12px;margin-bottom:8px">
+      <strong>💬 ${escapeHtml(g.cars?.brand||"")} ${escapeHtml(g.cars?.model||"")}</strong>
+      <p style="margin:6px 0">${escapeHtml(g.message||"")}</p>
+      <small>${escapeHtml(title)} · ${escapeHtml(new Date(g.created_at).toLocaleString(loc))} · ${escapeHtml(String(g.count))} ${escapeHtml(t("messagesWord"))}</small>
+      <br><button class="btn" style="margin-top:8px" onclick="openChat('${escapeHtml(g.car_id)}','${escapeHtml(g.buyer_id)}')">${escapeHtml(t("openConversation"))}</button>
+    </div>`;
+  }).join("");
 }
 
 function renderDashboardFeatured(){
@@ -5643,9 +5069,29 @@ function contactUs(){
    التشغيل
 ========================================================= */
 
-document.getElementById(
-  "filterSearch"
-).value="";
+/*
+   حماية خانة البحث من تعبئة البريد تلقائياً:
+   بعض المتصفحات تستعيد قيمة حقول النماذج عند فتح الصفحة.
+   خانة البحث ليست خانة بريد، لذلك نفرغها عند كل تحميل للصفحة
+   وبعد أن ينتهي المتصفح من محاولة استعادة قيم النماذج.
+*/
+function clearCarSearch(){
+  const input=document.getElementById("filterSearch");
+  if(input) input.value="";
+  ["filterMinPrice","filterMaxPrice","filterMinYear","filterMaxYear","filterMaxMileage"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.value="";
+  });
+  if(carsCache) renderCars();
+}
+
+clearCarSearch();
+window.addEventListener("pageshow",clearCarSearch);
+window.addEventListener("load",()=>{
+  clearCarSearch();
+  setTimeout(clearCarSearch,100);
+  setTimeout(clearCarSearch,500);
+});
 
 document.getElementById(
   "footerContactEmail"
@@ -5660,10 +5106,665 @@ setLanguage(
   currentLanguage
 );
 
+/* =========================================================
+   Thika Auto .dz — الدوال الناقصة (ألصقها داخل <script>
+   قبل سطر: fillCategories(); الموجود في آخر الملف)
+
+   وأضف هذا السطر مع بقية المتغيرات في الأعلى:
+   let forcedBuyerId=null;
+========================================================= */
+
+/* ---------- هل المستخدم أدمن؟ (من جدول admins، تحميه RLS) ---------- */
+async function refreshAdminStatus(){
+  isAdmin=false;
+  if(!currentUser) return;
+  const {data,error}=await supabaseClient
+    .from("admins")
+    .select("user_id")
+    .eq("user_id",currentUser.id)
+    .maybeSingle();
+  isAdmin=!error && !!data;
+}
+
+/* ---------- فتح لوحة الأدمن ---------- */
+function openAdminDashboard(){
+  if(!isAdmin){ alert(t("adminNotAllowed")); return; }
+  showPage("admin");
+  loadAdminData();
+}
+
+/* ---------- التنقل بين تبويبات الأدمن ---------- */
+function adminTab(tab,button){
+  if(!isAdmin){ alert(t("adminNotAllowed")); return; }
+  document.querySelectorAll(".admin-section").forEach(s=>s.classList.remove("active"));
+  document.querySelectorAll(".admin-nav").forEach(b=>b.classList.remove("active"));
+  const target=document.getElementById("admin"+tab.charAt(0).toUpperCase()+tab.slice(1));
+  if(target) target.classList.add("active");
+  if(button) button.classList.add("active");
+  loadAdminData();
+}
+
+/* ---------- تحميل بيانات الأدمن ---------- */
+async function loadAdminData(){
+  if(!isAdmin) return;
+
+  const {data,error}=await supabaseClient
+    .from("cars").select("*").order("created_at",{ascending:false});
+  if(!error) carsCache=data;
+
+  const cars=carsCache||[];
+  const users=new Set(cars.map(c=>c.user_id).filter(Boolean));
+
+  document.getElementById("adminAdsCount").textContent=cars.length;
+  document.getElementById("adminFeaturedCount").textContent=cars.filter(c=>c.is_featured===true).length;
+  document.getElementById("adminUsersCount").textContent=users.size;
+
+  const {count}=await supabaseClient
+    .from("messages").select("id",{count:"exact",head:true});
+  document.getElementById("adminMessagesCount").textContent=count??"—";
+
+  renderAdminRecent();
+  renderAdminAds();
+  renderAdminFeatured();
+  renderAdminUsers();
+  renderAdminMessages();
+}
+
+function adminMoney(n){
+  return Number(n||0).toLocaleString(currentLanguage==="ar"?"ar-DZ":currentLanguage==="fr"?"fr-DZ":"en-DZ")+" دج";
+}
+
+function adminThumb(c){
+  const img=c.image_url||c.images?.[0]||"https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=200";
+  return `<img src="${escapeHtml(img)}" alt="">`;
+}
+
+/* ---------- نظرة عامة ---------- */
+function renderAdminRecent(){
+  const box=document.getElementById("adminRecentAds");
+  const list=(carsCache||[]).slice(0,5);
+  box.innerHTML=list.length
+    ? list.map(c=>`<div class="admin-user-card">
+        <div>${escapeHtml(c.brand||"")} ${escapeHtml(c.model||"")}
+          <div class="admin-muted">${escapeHtml(c.wilaya||"")} · ${escapeHtml(adminMoney(c.price))}</div></div>
+        <span class="admin-badge ${c.is_featured?"featured":""}">${c.is_featured?t("adminFeaturedBadge"):t("adminNormal")}</span>
+      </div>`).join("")
+    : `<div class="empty-dashboard">${escapeHtml(t("adminNoAds"))}</div>`;
+}
+
+/* ---------- جدول كل الإعلانات ---------- */
+function renderAdminAds(){
+  const body=document.getElementById("adminAdsTable");
+  if(!body) return;
+  const q=(document.getElementById("adminAdsSearch")?.value||"").trim().toLowerCase();
+
+  const list=(carsCache||[]).filter(c=>{
+    if(!q) return true;
+    return [c.brand,c.model,c.wilaya,c.seller_email].filter(Boolean).join(" ").toLowerCase().includes(q);
+  });
+
+  body.innerHTML=list.length
+    ? list.map(c=>{
+        const id=escapeHtml(c.id);
+        return `<tr>
+          <td>${adminThumb(c)}</td>
+          <td><b>${escapeHtml(c.brand||"")} ${escapeHtml(c.model||"")}</b>
+              <div class="admin-muted">${escapeHtml(c.wilaya||"")}</div></td>
+          <td class="admin-muted">${escapeHtml(c.seller_email||"—")}</td>
+          <td>${escapeHtml(adminMoney(c.price))}</td>
+          <td><span class="admin-badge ${c.is_featured?"featured":""}">${c.is_featured?t("adminFeaturedBadge"):t("adminNormal")}</span></td>
+          <td>
+            <button class="btn" style="font-size:10px;padding:5px 8px" onclick="adminToggleFeatured('${id}',${c.is_featured?"false":"true"})">⭐</button>
+            <button class="btn admin-danger" style="font-size:10px;padding:5px 8px" onclick="adminDeleteAd('${id}')">${escapeHtml(t("adminDelete"))}</button>
+          </td>
+        </tr>`;
+      }).join("")
+    : `<tr><td colspan="6" class="admin-muted">${escapeHtml(t("adminNoAds"))}</td></tr>`;
+}
+
+/* ---------- الإعلانات المميزة ---------- */
+function renderAdminFeatured(){
+  const box=document.getElementById("adminFeaturedList");
+  const list=(carsCache||[]).filter(c=>c.is_featured===true);
+  box.innerHTML=list.length
+    ? list.map(c=>`<div class="admin-user-card">
+        <div>${escapeHtml(c.brand||"")} ${escapeHtml(c.model||"")}
+          <div class="admin-muted">${escapeHtml(c.seller_email||"")}</div></div>
+        <button class="btn admin-danger" style="font-size:10px" onclick="adminToggleFeatured('${escapeHtml(c.id)}',false)">✕</button>
+      </div>`).join("")
+    : `<div class="empty-dashboard">${escapeHtml(t("adminNoFeatured"))}</div>`;
+}
+
+/* ---------- المستخدمون (من الإعلانات) ---------- */
+function renderAdminUsers(){
+  const box=document.getElementById("adminUsersList");
+  const map=new Map();
+  (carsCache||[]).forEach(c=>{
+    if(!c.user_id) return;
+    if(!map.has(c.user_id)) map.set(c.user_id,{email:c.seller_email,count:0});
+    map.get(c.user_id).count++;
+  });
+  box.innerHTML=map.size
+    ? [...map.values()].map(u=>`<div class="admin-user-card">
+        <span>${escapeHtml(u.email||"—")}</span>
+        <span class="admin-badge">${escapeHtml(String(u.count))} 🚗</span>
+      </div>`).join("")
+    : `<div class="empty-dashboard">${escapeHtml(t("adminNoUsers"))}</div>`;
+}
+
+/* ---------- آخر الرسائل ---------- */
+async function renderAdminMessages(){
+  const box=document.getElementById("adminMessagesList");
+  const {data,error}=await supabaseClient
+    .from("messages")
+    .select("id,message,sender_name,created_at,cars(brand,model)")
+    .order("created_at",{ascending:false}).limit(50);
+  if(error||!data?.length){
+    box.innerHTML=`<div class="empty-dashboard">${escapeHtml(t("adminNoMessages"))}</div>`;
+    return;
+  }
+  const loc=currentLanguage==="ar"?"ar-DZ":currentLanguage==="fr"?"fr-DZ":"en-DZ";
+  box.innerHTML=data.map(m=>`<div class="dashboard-message">
+      <strong>💬 ${escapeHtml(m.cars?.brand||"")} ${escapeHtml(m.cars?.model||"")}</strong>
+      <p>${escapeHtml(m.message||"")}</p>
+      <small>${escapeHtml(m.sender_name||"")} · ${escapeHtml(new Date(m.created_at).toLocaleString(loc))}</small>
+    </div>`).join("");
+}
+
+/* ---------- إجراءات الأدمن (الصلاحية الحقيقية في RLS) ---------- */
+async function adminDeleteAd(id){
+  if(!isAdmin) return;
+  if(!confirm(t("adminDeleteConfirm"))) return;
+  const {error}=await supabaseClient.from("cars").delete().eq("id",id);
+  if(error){ alert(t("adminDeleteFail")); return; }
+  alert(t("adminDeleteOk"));
+  await loadAdminData();
+}
+
+async function adminToggleFeatured(id,value){
+  if(!isAdmin) return;
+  const {error}=await supabaseClient.from("cars").update({is_featured:value}).eq("id",id);
+  if(error){ alert(t("adminDeleteFail")); return; }
+  await loadAdminData();
+}
+/* =========================================================
+   Thika Auto .dz — زر «تعديل إعلاني»
+   ألصق هذا الملف كاملاً في نفس المكان السابق:
+   فوق سطر  initAuth().then(  وبعد كود admin-functions
+   (لا تحتاج تعديل أي دالة موجودة)
+========================================================= */
+
+D.editAd=[
+  "✏️ تعديل إعلاني",
+  "✏️ Modifier mon annonce",
+  "✏️ Edit my ad"
+];
+D.editCarTitle=[
+  "تعديل الإعلان",
+  "Modifier l'annonce",
+  "Edit ad"
+];
+D.saveChanges=[
+  "حفظ التعديلات ✅",
+  "Enregistrer ✅",
+  "Save changes ✅"
+];
+D.editedOk=[
+  "تم حفظ التعديلات",
+  "Modifications enregistrées",
+  "Changes saved"
+];
+D.editFail=[
+  "تعذر حفظ التعديلات",
+  "Impossible d'enregistrer les modifications",
+  "Could not save changes"
+];
+
+let editingCarId=null;
+
+/* ---------- فتح نافذة التعديل بقيم الإعلان الحالية ---------- */
+function openEdit(id){
+  if(!currentUser){ openModal("loginModal"); return; }
+
+  const car=(carsCache||[]).find(c=>String(c.id)===String(id));
+  if(!car || car.user_id!==currentUser.id) return;
+
+  editingCarId=car.id;
+
+  const set=(el,val)=>{ document.getElementById(el).value=(val??""); };
+
+  set("category",car.category||"cars");
+  set("brand",car.brand);
+  set("model",car.model);
+  set("year",car.year);
+  set("price",car.price);
+  set("mileage",car.mileage);
+  set("wilaya",car.wilaya);
+  set("fuel",car.fuel);
+  set("gearbox",car.gearbox);
+  set("phone",car.phone);
+  set("desc",car.description);
+  document.getElementById("carImages").value="";
+
+  const title=document.querySelector("#addModal h3");
+  if(title) title.textContent=t("editCarTitle");
+
+  const btn=document.getElementById("publishBtn");
+  btn.textContent=t("saveChanges");
+  btn.onclick=saveCarEdit;
+
+  openModal("addModal");
+}
+
+/* ---------- حفظ التعديلات (الصور تبقى كما هي) ---------- */
+async function saveCarEdit(){
+  if(!currentUser || !editingCarId) return;
+
+  const v=id=>document.getElementById(id).value.trim();
+  const price=parseInt(v("price"));
+
+  if(!v("brand")||!v("model")||!price||price<=0||!v("wilaya")||!v("phone")){
+    alert(t("required"));
+    return;
+  }
+
+  const btn=document.getElementById("publishBtn");
+  btn.disabled=true;
+
+  const {error}=await supabaseClient
+    .from("cars")
+    .update({
+      category:v("category")||"cars",
+      brand:v("brand"),
+      model:v("model"),
+      year:parseInt(v("year"))||null,
+      mileage:parseInt(v("mileage"))||null,
+      price,
+      wilaya:v("wilaya"),
+      fuel:v("fuel"),
+      gearbox:v("gearbox"),
+      phone:v("phone"),
+      description:v("desc")
+    })
+    .eq("id",editingCarId)
+    .eq("user_id",currentUser.id);
+
+  btn.disabled=false;
+
+  if(error){
+    alert(t("editFail"));
+    return;
+  }
+
+  closeModal("addModal");
+  resetAddForm();
+  await loadCars();
+  alert(t("editedOk"));
+}
+
+/* ---------- إعادة نافذة الإضافة لوضعها الطبيعي ---------- */
+function resetAddForm(){
+  editingCarId=null;
+  const title=document.querySelector("#addModal h3");
+  if(title) title.textContent=t("addCarTitle");
+  const btn=document.getElementById("publishBtn");
+  btn.textContent=t("publish");
+  btn.onclick=addCar;
+  ["brand","model","year","price","mileage","phone","desc"].forEach(id=>{
+    document.getElementById(id).value="";
+  });
+  document.getElementById("wilaya").value="";
+  document.getElementById("carImages").value="";
+}
+
+/* openAdd الأصلية تُغلَّف: تصفّر وضع التعديل أولاً */
+const _origOpenAdd=openAdd;
+openAdd=function(){
+  if(editingCarId){
+    resetAddForm();
+    ["brand","model","year","price","mileage","phone","desc"].forEach(id=>{
+      document.getElementById(id).value="";
+    });
+    document.getElementById("wilaya").value="";
+  }
+  _origOpenAdd();
+};
+
+/* renderCars الأصلية تُغلَّف: نضيف زر التعديل بجانب زر الحذف */
+const _origRenderCars=renderCars;
+renderCars=function(){
+  _origRenderCars();
+  document.querySelectorAll("#carsGrid .btn-delete").forEach(delBtn=>{
+    const m=/deleteCar\('([^']+)'\)/.exec(delBtn.getAttribute("onclick")||"");
+    if(!m) return;
+    const edit=document.createElement("button");
+    edit.className="btn";
+    edit.style.cssText="width:100%;margin-top:8px;background:#e0f2fe;color:#0369a1";
+    edit.textContent=t("editAd");
+    edit.setAttribute("onclick","openEdit('"+m[1]+"')");
+    delBtn.parentNode.insertBefore(edit,delBtn);
+  });
+};
+
+/* =========================================================
+   Thika Auto .dz — خانات الصور المحددة + ضغط الصور
+   ألصق هذا الملف كاملاً بعد edit-ad.js وقبل سطر:
+   initAuth().then(
+========================================================= */
+
+/* ---------- النصوص ---------- */
+D.photoSlotsTitle=[
+  "📸 صور السيارة (كل خانة لصورة محددة)",
+  "📸 Photos du véhicule (une photo par emplacement)",
+  "📸 Car photos (one photo per slot)"
+];
+D.photoSlotsHint=[
+  "jpg أو png أو webp. تُصغَّر الصور تلقائياً قبل الرفع.",
+  "jpg, png ou webp. Les photos sont réduites automatiquement avant l'envoi.",
+  "jpg, png or webp. Photos are resized automatically before upload."
+];
+D.photoMissing=[
+  "أضف الصور المطلوبة:",
+  "Ajoutez les photos requises :",
+  "Please add the required photos:"
+];
+D.photoBadType=[
+  "الصيغة غير مقبولة. استعمل jpg أو png أو webp.",
+  "Format non accepté. Utilisez jpg, png ou webp.",
+  "Unsupported format. Use jpg, png or webp."
+];
+D.photoTooBig=[
+  "الصورة كبيرة جداً (الحد الأقصى 25 ميغابايت).",
+  "Photo trop volumineuse (25 Mo maximum).",
+  "Photo too large (25 MB max)."
+];
+D.photoUploadFail=[
+  "فشل رفع إحدى الصور. حاول مرة أخرى.",
+  "Échec de l'envoi d'une photo. Réessayez.",
+  "One photo failed to upload. Please try again."
+];
+
+const PHOTO_SLOTS=[
+  {k:"front",    l:["أمامية","Avant","Front"]},
+  {k:"rear",     l:["خلفية","Arrière","Rear"]},
+  {k:"top",      l:["من الأعلى","Vue du dessus","Top view"]},
+  {k:"interior", l:["داخل السيارة","Intérieur","Interior"]},
+  {k:"dashboard",l:["لوحة القيادة (Tableau)","Tableau de bord","Dashboard"]},
+  {k:"engine",   l:["المحرك","Moteur","Engine"]}
+];
+
+const PHOTO_MAX_SIDE=1280;
+const PHOTO_QUALITY=0.8;
+const PHOTO_MAX_INPUT=25*1024*1024;
+const PHOTO_TYPES=["image/jpeg","image/png","image/webp"];
+
+let slotFiles={};
+let slotPreviewUrls={};
+
+/* السيارات والشاحنات: كل الخانات إلزامية. غيرها: الأمامية فقط */
+function requiredSlots(cat){
+  return (cat==="cars"||cat==="trucks")
+    ? PHOTO_SLOTS.map(s=>s.k)
+    : ["front"];
+}
+
+function slotLabel(slot){
+  const i=LANGS.indexOf(currentLanguage);
+  return slot.l[i]||slot.l[0];
+}
+
+/* ---------- بناء الواجهة ---------- */
+(function buildPhotoSlots(){
+  const oldInput=document.getElementById("carImages");
+  if(!oldInput) return;
+  const oldBox=oldInput.parentElement;
+  oldBox.style.display="none";
+
+  const css=document.createElement("style");
+  css.textContent=`
+    #photoSlotsWrap{background:#f0fdf4;padding:12px;border-radius:12px;border:2px dashed #22c55e;margin:10px 0}
+    #photoSlotsWrap .ps-title{font-weight:900;display:block;margin-bottom:4px}
+    #photoSlotsWrap .ps-hint{font-size:10px;color:#64748b;margin-bottom:8px}
+    .ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .photo-slot{position:relative;display:flex;align-items:flex-end;justify-content:center;height:96px;border:1.5px solid #cbd5e1;border-radius:10px;background:#fff;overflow:hidden;cursor:pointer}
+    .photo-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+    .photo-slot.has-img img{display:block}
+    .photo-slot .ps-label{position:relative;z-index:1;width:100%;text-align:center;font-size:11px;font-weight:800;padding:5px 4px;background:rgba(255,255,255,.9)}
+    .photo-slot:not(.has-img) .ps-label{background:transparent;align-self:center;font-size:12px;color:#475569}
+    .photo-slot.missing{border-color:#ef4444}
+  `;
+  document.head.appendChild(css);
+
+  const wrap=document.createElement("div");
+  wrap.id="photoSlotsWrap";
+  wrap.innerHTML=`
+    <span class="ps-title" id="psTitle"></span>
+    <div class="ps-hint" id="psHint"></div>
+    <div class="ps-grid">
+      ${PHOTO_SLOTS.map(s=>`
+        <label class="photo-slot" id="slot_${s.k}">
+          <input type="file" accept="image/jpeg,image/png,image/webp" hidden data-slot="${s.k}">
+          <img alt="">
+          <span class="ps-label"></span>
+        </label>`).join("")}
+    </div>`;
+  oldBox.parentNode.insertBefore(wrap,oldBox);
+
+  wrap.querySelectorAll("input[type=file]").forEach(inp=>{
+    inp.addEventListener("change",()=>onSlotChange(inp));
+  });
+
+  const cat=document.getElementById("category");
+  if(cat) cat.addEventListener("change",updateSlotLabels);
+
+  updateSlotLabels();
+})();
+
+function updateSlotLabels(){
+  const title=document.getElementById("psTitle");
+  const hint=document.getElementById("psHint");
+  if(title) title.textContent=t("photoSlotsTitle");
+  if(hint) hint.textContent=t("photoSlotsHint");
+  const req=requiredSlots(document.getElementById("category")?.value||"cars");
+  PHOTO_SLOTS.forEach(s=>{
+    const el=document.querySelector("#slot_"+s.k+" .ps-label");
+    if(el) el.textContent="📷 "+slotLabel(s)+(req.includes(s.k)?" *":"");
+  });
+}
+
+function onSlotChange(inp){
+  const k=inp.dataset.slot;
+  const file=inp.files[0];
+  const box=document.getElementById("slot_"+k);
+  if(!file){ clearSlot(k); return; }
+
+  if(!PHOTO_TYPES.includes(file.type)){
+    alert(t("photoBadType"));
+    inp.value="";
+    return;
+  }
+  if(file.size>PHOTO_MAX_INPUT){
+    alert(t("photoTooBig"));
+    inp.value="";
+    return;
+  }
+
+  slotFiles[k]=file;
+  if(slotPreviewUrls[k]) URL.revokeObjectURL(slotPreviewUrls[k]);
+  slotPreviewUrls[k]=URL.createObjectURL(file);
+  box.querySelector("img").src=slotPreviewUrls[k];
+  box.classList.add("has-img");
+  box.classList.remove("missing");
+}
+
+function clearSlot(k){
+  delete slotFiles[k];
+  if(slotPreviewUrls[k]){ URL.revokeObjectURL(slotPreviewUrls[k]); delete slotPreviewUrls[k]; }
+  const box=document.getElementById("slot_"+k);
+  if(!box) return;
+  box.classList.remove("has-img","missing");
+  box.querySelector("img").removeAttribute("src");
+  box.querySelector("input").value="";
+}
+
+function clearAllSlots(){
+  PHOTO_SLOTS.forEach(s=>clearSlot(s.k));
+}
+
+function showPhotoSlots(show){
+  const w=document.getElementById("photoSlotsWrap");
+  if(w) w.style.display=show?"block":"none";
+}
+
+/* ---------- ضغط الصورة داخل المتصفح ---------- */
+function compressImage(file){
+  return new Promise((resolve,reject)=>{
+    const url=URL.createObjectURL(file);
+    const img=new Image();
+    img.onload=()=>{
+      URL.revokeObjectURL(url);
+      const scale=Math.min(1,PHOTO_MAX_SIDE/Math.max(img.width,img.height));
+      const w=Math.max(1,Math.round(img.width*scale));
+      const h=Math.max(1,Math.round(img.height*scale));
+      const canvas=document.createElement("canvas");
+      canvas.width=w; canvas.height=h;
+      const ctx=canvas.getContext("2d");
+      ctx.fillStyle="#fff";
+      ctx.fillRect(0,0,w,h);
+      ctx.drawImage(img,0,0,w,h);
+      canvas.toBlob(
+        b=>b?resolve(b):reject(new Error("compress")),
+        "image/jpeg",
+        PHOTO_QUALITY
+      );
+    };
+    img.onerror=()=>{ URL.revokeObjectURL(url); reject(new Error("load")); };
+    img.src=url;
+  });
+}
+
+/* ---------- ربط وضع التعديل والتنقل ---------- */
+if(typeof openEdit==="function"){
+  const _origOpenEdit=openEdit;
+  openEdit=function(id){
+    _origOpenEdit(id);
+    showPhotoSlots(false);
+  };
+}
+
+if(typeof resetAddForm==="function"){
+  const _origResetAddForm=resetAddForm;
+  resetAddForm=function(){
+    _origResetAddForm();
+    clearAllSlots();
+    showPhotoSlots(true);
+    updateSlotLabels();
+  };
+}
+
+const _origSetLanguage=setLanguage;
+setLanguage=function(lang){
+  _origSetLanguage(lang);
+  updateSlotLabels();
+};
+
+/* ---------- addCar الجديدة: صور محددة + ضغط ---------- */
+addCar=async function(){
+  if(!currentUser){ openModal("loginModal"); return; }
+
+  const btn=document.getElementById("publishBtn");
+  const v=id=>document.getElementById(id).value.trim();
+  const price=parseInt(v("price"));
+  const category=v("category")||"cars";
+
+  if(!v("brand")||!v("model")||!price||price<=0||!v("wilaya")||!v("phone")){
+    alert(t("required"));
+    return;
+  }
+
+  /* الصور الإلزامية */
+  const req=requiredSlots(category);
+  const missing=req.filter(k=>!slotFiles[k]);
+  if(missing.length){
+    PHOTO_SLOTS.forEach(s=>{
+      document.getElementById("slot_"+s.k).classList.toggle("missing",missing.includes(s.k));
+    });
+    const names=PHOTO_SLOTS.filter(s=>missing.includes(s.k)).map(slotLabel).join(" ، ");
+    alert(t("photoMissing")+"\n"+names);
+    return;
+  }
+
+  /* حد إعلان كل 24 ساعة (الأدمن مستثنى، والخادم يفرضه أيضاً) */
+  if(!isAdmin){
+    const since=new Date(Date.now()-24*60*60*1000).toISOString();
+    const {data:recent,error:rateError}=await supabaseClient
+      .from("cars").select("id")
+      .eq("user_id",currentUser.id)
+      .gte("created_at",since).limit(1);
+    if(rateError){ alert(rateError.message); return; }
+    if(recent?.length){ alert(t("oneAdPerDay")); return; }
+  }
+
+  btn.disabled=true;
+
+  /* ضغط ثم رفع بالترتيب الثابت للخانات */
+  const keys=PHOTO_SLOTS.map(s=>s.k).filter(k=>slotFiles[k]);
+  const urls=[];
+
+  try{
+    for(let i=0;i<keys.length;i++){
+      btn.textContent=t("uploading")+" "+(i+1)+"/"+keys.length;
+      const blob=await compressImage(slotFiles[keys[i]]);
+      const name=Date.now()+"-"+keys[i]+"-"+Math.random().toString(36).slice(2)+".jpg";
+      const {error:upErr}=await supabaseClient.storage
+        .from("car-images")
+        .upload(name,blob,{contentType:"image/jpeg"});
+      if(upErr) throw upErr;
+      urls.push(
+        supabaseClient.storage.from("car-images").getPublicUrl(name).data.publicUrl
+      );
+    }
+  }catch(e){
+    btn.disabled=false;
+    btn.textContent=t("publish");
+    alert(t("photoUploadFail"));
+    return;
+  }
+
+  const {error}=await supabaseClient.from("cars").insert({
+    category,
+    brand:v("brand"),
+    model:v("model"),
+    year:parseInt(v("year"))||null,
+    mileage:parseInt(v("mileage"))||null,
+    price,
+    wilaya:v("wilaya"),
+    fuel:v("fuel"),
+    gearbox:v("gearbox"),
+    phone:v("phone"),
+    description:v("desc"),
+    image_url:urls[0],
+    images:urls,
+    user_id:currentUser.id,
+    seller_email:currentUser.email
+  });
+
+  btn.disabled=false;
+  btn.textContent=t("publish");
+
+  if(error){
+    alert(/one ad every 24 hours/i.test(error.message)?t("adRateError"):error.message);
+    return;
+  }
+
+  closeModal("addModal");
+  clearAllSlots();
+  await loadCars();
+  alert(t("published"));
+};
 initAuth().then(
   loadCars
 );
-
 supabaseClient
   .auth
   .onAuthStateChange(
