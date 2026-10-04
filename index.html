@@ -5750,7 +5750,7 @@ addCar=async function(){
   });
 
   btn.disabled=false;
-  btn.textContent=t("publish");
+  btn.textContent=t("publish"); 
 
   if(error){
     alert(/one ad every 24 hours/i.test(error.message)?t("adRateError"):error.message);
