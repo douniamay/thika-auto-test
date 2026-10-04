@@ -5804,6 +5804,182 @@ supabaseClient
     }
   );
 
+  /* =========================================================
+   Thika Auto .dz — صفحة تفاصيل الإعلان (معرض الصور + الوصف)
+   ألصق هذا الملف في آخر السكربت، قبل وسم الإغلاق الأخير.
+========================================================= */
+
+D.detailsBtn=["🔍 التفاصيل","🔍 Détails","🔍 Details"];
+D.specYear=["السنة","Année","Year"];
+D.specMileage=["المسافة المقطوعة","Kilométrage","Mileage"];
+D.specFuel=["الوقود","Carburant","Fuel"];
+D.specGearbox=["ناقل الحركة","Boîte de vitesses","Gearbox"];
+D.specWilaya=["الولاية","Wilaya","Wilaya"];
+D.specCategory=["القسم","Catégorie","Category"];
+D.specDescription=["الوصف","Description","Description"];
+D.noDescription=[
+  "لم يضف المعلن وصفاً.",
+  "Le vendeur n'a pas ajouté de description.",
+  "The seller did not add a description."
+];
+D.startChat=["💬 تواصل مع البائع","💬 Contacter le vendeur","💬 Contact seller"];
+
+const VALUE_LABELS={
+  "بنزين":["بنزين","Essence","Petrol"],
+  "ديزل":["ديزل","Diesel","Diesel"],
+  "غاز":["غاز","GPL","LPG"],
+  "هجين":["هجين","Hybride","Hybrid"],
+  "يدوي":["يدوي","Manuelle","Manual"],
+  "أوتوماتيك":["أوتوماتيك","Automatique","Automatic"]
+};
+
+function valueLabel(v){
+  const i=LANGS.indexOf(currentLanguage);
+  const row=VALUE_LABELS[v];
+  return row?(row[i]||row[0]):v;
+}
+
+/* ---------- بناء النافذة ---------- */
+(function buildDetailModal(){
+  const css=document.createElement("style");
+  css.textContent=`
+    #detailModal .modal-box{max-width:600px}
+    .dt-main{width:100%;height:300px;object-fit:cover;border-radius:14px;background:#e2e8f0;display:block}
+    .dt-caption{font-size:11px;font-weight:800;color:#475569;margin:6px 0 8px;text-align:center;min-height:16px}
+    .dt-thumbs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}
+    .dt-thumbs img{width:68px;height:52px;object-fit:cover;border-radius:8px;border:2px solid transparent;cursor:pointer;flex:none;background:#e2e8f0}
+    .dt-thumbs img.active{border-color:#facc15}
+    .dt-title{font-size:18px;font-weight:900;margin:10px 0 2px}
+    .dt-price{color:#16a34a;font-weight:900;font-size:20px;margin-bottom:10px}
+    .dt-specs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+    .dt-spec{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:8px 10px}
+    .dt-spec small{display:block;color:#64748b;font-size:10px;margin-bottom:2px}
+    .dt-spec strong{font-size:12px}
+    .dt-desc-title{font-weight:900;font-size:13px;margin:12px 0 4px}
+    .dt-desc{white-space:pre-line;font-size:12px;line-height:1.8;color:#334155;word-break:break-word}
+    @media(max-width:520px){.dt-main{height:220px}}
+  `;
+  document.head.appendChild(css);
+
+  const m=document.createElement("div");
+  m.className="modal";
+  m.id="detailModal";
+  m.innerHTML=`<div class="modal-box">
+    <button class="close-x" onclick="closeModal('detailModal')">✕</button>
+    <div id="detailBody"></div>
+  </div>`;
+  document.body.appendChild(m);
+
+  m.addEventListener("click",e=>{ if(e.target===m) closeModal("detailModal"); });
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Escape") closeModal("detailModal");
+  });
+})();
+
+let detailImages=[];
+let detailLabels=[];
+
+function detailShow(i){
+  const main=document.getElementById("detailMain");
+  if(!main||!detailImages[i]) return;
+  main.src=detailImages[i];
+  const cap=document.getElementById("detailCaption");
+  if(cap) cap.textContent=detailLabels[i]||"";
+  document.querySelectorAll("#detailThumbs img").forEach((el,idx)=>{
+    el.classList.toggle("active",idx===i);
+  });
+}
+
+/* ---------- فتح التفاصيل ---------- */
+function openDetails(id){
+  const c=(carsCache||[]).find(x=>String(x.id)===String(id));
+  if(!c) return;
+
+  const fallback="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800";
+  let imgs=(Array.isArray(c.images)&&c.images.length?c.images:[c.image_url]).filter(Boolean);
+  if(!imgs.length) imgs=[fallback];
+  detailImages=imgs;
+
+  /* أسماء الصور فقط إذا كانت مرفوعة بالخانات الست */
+  const lang=LANGS.indexOf(currentLanguage);
+  const useLabels=typeof PHOTO_SLOTS!=="undefined" && imgs.length===PHOTO_SLOTS.length;
+  detailLabels=useLabels?PHOTO_SLOTS.map(s=>s.l[lang]||s.l[0]):imgs.map(()=>"");
+
+  const loc=currentLanguage==="ar"?"ar-DZ":currentLanguage==="fr"?"fr-DZ":"en-DZ";
+  const specs=[
+    [t("specCategory"),catLabel(c.category||"cars")],
+    [t("specWilaya"),c.wilaya],
+    [t("specYear"),c.year],
+    [t("specMileage"),c.mileage?Number(c.mileage).toLocaleString(loc)+" km":""],
+    [t("specFuel"),c.fuel?valueLabel(c.fuel):""],
+    [t("specGearbox"),c.gearbox?valueLabel(c.gearbox):""]
+  ].filter(s=>s[1]);
+
+  const own=currentUser && c.user_id===currentUser.id;
+
+  document.getElementById("detailBody").innerHTML=`
+    <img class="dt-main" id="detailMain" alt="${escapeHtml((c.brand||"")+" "+(c.model||""))}">
+    <div class="dt-caption" id="detailCaption"></div>
+    ${imgs.length>1?`<div class="dt-thumbs" id="detailThumbs">
+      ${imgs.map((u,i)=>`<img src="${escapeHtml(u)}" alt="" onclick="detailShow(${i})">`).join("")}
+    </div>`:""}
+    <div class="dt-title">${escapeHtml(c.brand||"")} ${escapeHtml(c.model||"")}</div>
+    <div class="dt-price">${escapeHtml(Number(c.price||0).toLocaleString(loc))} دج</div>
+    <div class="dt-specs">
+      ${specs.map(s=>`<div class="dt-spec"><small>${escapeHtml(s[0])}</small><strong>${escapeHtml(String(s[1]))}</strong></div>`).join("")}
+    </div>
+    <div class="dt-desc-title">${escapeHtml(t("specDescription"))}</div>
+    <div class="dt-desc">${c.description?escapeHtml(c.description):`<em>${escapeHtml(t("noDescription"))}</em>`}</div>
+    ${own?"":`<button class="btn" style="width:100%;margin-top:14px;padding:12px" onclick="closeModal('detailModal');openChat('${escapeHtml(c.id)}')">${escapeHtml(t("startChat"))}</button>`}
+  `;
+
+  detailShow(0);
+  openModal("detailModal");
+}
+
+/* ---------- البطاقات: زر التفاصيل + مقتطف من الوصف + الصورة قابلة للنقر ---------- */
+const _origRenderCarsDetails=renderCars;
+renderCars=function(){
+  _origRenderCarsDetails();
+
+  document.querySelectorAll("#carsGrid .card").forEach(card=>{
+    const chatBtn=[...card.querySelectorAll("button")]
+      .find(b=>/openChat\(/.test(b.getAttribute("onclick")||""));
+    if(!chatBtn) return;
+    const m=/openChat\('([^']+)'/.exec(chatBtn.getAttribute("onclick"));
+    if(!m) return;
+    const id=m[1];
+    const car=(carsCache||[]).find(x=>String(x.id)===String(id));
+
+    const img=card.querySelector("img");
+    if(img){
+      img.style.cursor="pointer";
+      img.setAttribute("onclick","openDetails('"+id+"')");
+    }
+
+    if(car && car.description){
+      const d=document.createElement("div");
+      d.className="meta";
+      d.style.cssText="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.5;margin:6px 0;color:#475569";
+      d.textContent=car.description;
+      chatBtn.parentNode.insertBefore(d,chatBtn);
+    }
+
+    const b=document.createElement("button");
+    b.className="btn";
+    b.style.cssText="width:100%;margin-top:8px;background:#0f172a;color:#fff";
+    b.textContent=t("detailsBtn");
+    b.setAttribute("onclick","openDetails('"+id+"')");
+    chatBtn.parentNode.insertBefore(b,chatBtn);
+  });
+};
+
+/* ---------- لوحة التحكم: زر «عرض» يفتح التفاصيل بدل المحادثة ---------- */
+const _origDashAdDetails=dashboardAdHtml;
+dashboardAdHtml=function(c){
+  return _origDashAdDetails(c).replace('onclick="openChat(','onclick="openDetails(');
+};
+
 </script>
 
 </body>
